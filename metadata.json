@@ -1,0 +1,8 @@
+{
+  "name": "LangChain LLM Router - Cost-Aware Enterprise Gateway",
+  "description": "LangChain-powered dynamic LLM middleware that classifies query complexity and performs real-time cost-spectrum routing against live model pricing to reduce enterprise API overhead by up to 70%.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
