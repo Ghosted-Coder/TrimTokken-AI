@@ -23,6 +23,7 @@ import {
   Layers,
   FileText,
   Sliders,
+  LockKeyhole,
   Download,
 } from 'lucide-react';
 import { EmployeeUsageRecord, QueryComplexity } from '../types';
@@ -726,7 +727,9 @@ export const EmployeeActivityDashboard: React.FC<EmployeeActivityDashboardProps>
               </div>
 
               <button
+                type="button"
                 onClick={() => setSelectedEmployee(null)}
+                aria-label="Close employee details"
                 className="p-1.5 rounded-lg bg-[#1c222c] text-[#869683] hover:text-white transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -741,6 +744,33 @@ export const EmployeeActivityDashboard: React.FC<EmployeeActivityDashboardProps>
                   <div className="text-[10px] font-mono-data text-[#869683]">TOTAL COST SAVED</div>
                   <div className="text-xl font-bold font-mono-data text-[#00ff41] mt-1">
                     ${selectedEmployee.costSaved.toFixed(2)}
+                  </div>
+
+                  <div className="rounded-xl border border-[#00e5ff]/30 bg-[#00e5ff]/[0.06] p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-[10px] font-mono-data font-bold text-[#00e5ff] flex items-center gap-1.5">
+                          <LockKeyhole className="w-3.5 h-3.5" />
+                          PRIVACY & QUOTA
+                        </div>
+                        <p className="text-[11px] text-[#b9ccb2]/80 mt-1">
+                          Prompts are shown here for workspace audit purposes; provider responses are not stored in this employee summary.
+                        </p>
+                      </div>
+                      <span className="text-xs font-mono-data font-bold text-white shrink-0">
+                        {Math.min(100, Math.round((selectedEmployee.tokensConsumed / Math.max(1, selectedEmployee.tokensLimit)) * 100))}%
+                      </span>
+                    </div>
+                    <div className="mt-3 h-2 rounded-full bg-[#10141a] overflow-hidden border border-[#3b4b37]/40">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#00e5ff] to-[#00ff41]"
+                        style={{ width: `${Math.min(100, (selectedEmployee.tokensConsumed / Math.max(1, selectedEmployee.tokensLimit)) * 100)}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-between text-[10px] font-mono-data text-[#869683]">
+                      <span>{selectedEmployee.tokensConsumed.toLocaleString()} tokens used</span>
+                      <span>{selectedEmployee.tokensLimit.toLocaleString()} token limit</span>
+                    </div>
                   </div>
                   <div className="text-[10px] font-mono-data text-[#00ff41]/80 mt-0.5">
                     +{selectedEmployee.savingsPercentage}% vs frontier baseline

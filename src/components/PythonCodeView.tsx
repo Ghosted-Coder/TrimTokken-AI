@@ -35,10 +35,10 @@ export const PythonCodeView: React.FC = () => {
             </span>
             <div>
               <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
-                Python Backend MVP & Dynamic Router Engine
+                Python Backend Reference
               </h2>
               <p className="text-xs font-mono-data text-[#b9ccb2]">
-                Complete runnable FastAPI middleware implementing CSCR vector routing and OpenAI drop-in proxy.
+                Downloadable reference code for a future Python gateway integration; the active demo gateway runs in the TypeScript server.
               </p>
             </div>
           </div>

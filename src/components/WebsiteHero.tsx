@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, ArrowRight, ShieldCheck, Zap, DollarSign, Terminal, Search, Play, Users, Cpu, ChevronDown, Check } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Zap, DollarSign, Terminal, Search, Play, Users, Cpu, ChevronDown, Check, X } from 'lucide-react';
 import { TrimTokenLogo } from './TrimTokenLogo';
 import { ModelPricing } from '../types';
 
@@ -96,6 +96,13 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
     }
   };
 
+  const handlePromptKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      handleHeroSubmit();
+    }
+  };
+
   return (
     <section className="relative pt-4 pb-16 sm:pb-24">
       {/* Background ambient lighting */}
@@ -184,9 +191,22 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                       type="text"
                       value={heroPrompt}
                       onChange={(e) => setHeroPrompt(e.target.value)}
+                      onKeyDown={handlePromptKeyDown}
+                      aria-label="Prompt to route"
                       placeholder="Ask anything or enter a query to route (e.g. 'What is 15 * 24?')..."
-                      className="w-full bg-transparent text-sm sm:text-base font-mono-data text-white placeholder:text-[#b9ccb2]/50 focus:outline-none"
+                      data-prompt-input
+                      className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none w-full bg-transparent text-sm sm:text-base font-mono-data text-white placeholder:text-[#b9ccb2]/50"
                     />
+                    {heroPrompt && (
+                      <button
+                        type="button"
+                        onClick={() => setHeroPrompt('')}
+                        aria-label="Clear prompt"
+                        className="rounded-md p-1 text-[#869683] hover:bg-white/10 hover:text-white transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
 
                   {/* Extra Model Dropdown Selector (Direct API / Bypass Routing) */}
@@ -330,6 +350,10 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
+                <div className="mt-2 flex items-center justify-between px-1 text-[10px] font-mono-data text-[#869683]" aria-live="polite">
+                  <span>Try: summarize a document, debug code, or analyze a contract</span>
+                  <span className="hidden sm:inline text-[#b9ccb2]/60">⌘/Ctrl + Enter to route • Auto or forced model</span>
+                </div>
               </form>
 
               {/* Quick preset suggestions */}
@@ -338,22 +362,25 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                   <Sparkles className="w-3 h-3 text-[#ffba20]" /> Try:
                 </span>
                 <button
-                  onClick={() => handlePresetClick('What is 25 * 34?')}
+                  type="button"
+                  onClick={() => handlePresetClick('Summarize this document into five concise bullet points, highlighting risks and next steps.')}
                   className="text-xs font-mono-data bg-[#141a22] hover:bg-[#00ff41]/15 text-[#dfe2eb] hover:text-[#00ff41] px-3 py-1.5 rounded-lg border border-[#3b4b37] hover:border-[#00ff41]/60 transition-all cursor-pointer shadow-sm"
                 >
-                  "What is 25 * 34?"
+                  Summarize a document
                 </button>
                 <button
-                  onClick={() => handlePresetClick('Summarize our 14-day customer return policy.')}
+                  type="button"
+                  onClick={() => handlePresetClick('Debug this function, explain the root cause, and provide a corrected implementation with tests.')}
                   className="text-xs font-mono-data bg-[#141a22] hover:bg-[#00ff41]/15 text-[#dfe2eb] hover:text-[#00ff41] px-3 py-1.5 rounded-lg border border-[#3b4b37] hover:border-[#00ff41]/60 transition-all cursor-pointer shadow-sm"
                 >
-                  "Summarize 14-day return policy"
+                  Debug this function
                 </button>
                 <button
-                  onClick={() => handlePresetClick('Write a thread-safe singleton in TypeScript.')}
+                  type="button"
+                  onClick={() => handlePresetClick('Analyze this contract for unusual obligations, termination risks, and missing protections.')}
                   className="text-xs font-mono-data bg-[#141a22] hover:bg-[#ffba20]/15 text-[#dfe2eb] hover:text-[#ffba20] px-3 py-1.5 rounded-lg border border-[#3b4b37] hover:border-[#ffba20]/60 transition-all cursor-pointer shadow-sm"
                 >
-                  "Thread-safe TypeScript singleton"
+                  Analyze a contract
                 </button>
               </div>
             </div>
@@ -382,7 +409,8 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                         value={heroPrompt}
                         onChange={(e) => setHeroPrompt(e.target.value)}
                         placeholder="Search, route a prompt, or enter code..."
-                        className="w-full bg-transparent text-xs sm:text-sm font-mono-data text-white placeholder:text-[#b9ccb2]/50 focus:outline-none"
+                        data-prompt-input
+                        className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none w-full bg-transparent text-xs sm:text-sm font-mono-data text-white placeholder:text-[#b9ccb2]/50"
                       />
 
                       {heroPrompt && (
@@ -557,4 +585,3 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
     </section>
   );
 };
-

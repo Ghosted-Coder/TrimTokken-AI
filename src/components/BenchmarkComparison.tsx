@@ -65,7 +65,7 @@ export const BenchmarkComparison: React.FC = () => {
           Zero Quality Sacrifice Across Standard Suites
         </h2>
         <p className="font-body text-sm sm:text-base text-[#b9ccb2]">
-          Frontier accuracy preserved on complex reasoning tasks while routine queries are routed by LangChain LLM at commodity inference prices.
+          Illustrative workload comparisons for the current demo configuration. Re-run an evaluation suite before publishing production quality or savings claims.
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export const BenchmarkComparison: React.FC = () => {
               <tr className="bg-[#10141a] text-[#b9ccb2] border-b border-[#3b4b37]/60">
                 <th className="py-3.5 px-4 font-semibold">WORKLOAD DOMAIN</th>
                 <th className="py-3.5 px-4 font-semibold">NAIVE APPROACH</th>
-                <th className="py-3.5 px-4 font-semibold">LANGCHAIN LLM ROUTER</th>
+                <th className="py-3.5 px-4 font-semibold">TRIMTOKEN ROUTING DEMO</th>
                 <th className="py-3.5 px-4 font-semibold text-center">QUALITY RETENTION</th>
                 <th className="py-3.5 px-4 font-semibold text-right">COST DELTA</th>
               </tr>

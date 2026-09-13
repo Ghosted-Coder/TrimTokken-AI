@@ -4,6 +4,17 @@ html {
   scroll-behavior: smooth;
 }
 
+:focus-visible {
+  outline: 2px solid #00e5ff;
+  outline-offset: 3px;
+}
+
+[data-prompt-input]:focus,
+[data-prompt-input]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 @layer utilities {
   .font-mono-data {
     font-family: 'JetBrains Mono', monospace;
@@ -56,6 +67,145 @@ html {
   background: radial-gradient(circle at 50% 0%, rgba(0, 255, 65, 0.08) 0%, transparent 65%);
 }
 
+/* Lightweight animated meteor shower for auth and dashboard backdrops. */
+.meteor-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.48;
+  z-index: 0;
+  isolation: isolate;
+}
+
+.meteor-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 0%, rgba(0, 229, 255, 0.025) 45%, transparent 70%);
+  transform: translateX(-100%);
+  animation: meteor-sheen 13s ease-in-out infinite;
+}
+
+.meteor-aurora {
+  position: absolute;
+  width: 52vw;
+  height: 32vw;
+  min-width: 420px;
+  min-height: 280px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  animation: aurora-drift 18s ease-in-out infinite alternate;
+}
+
+.meteor-aurora-green {
+  top: -18%;
+  left: -12%;
+  background: radial-gradient(ellipse, rgba(0, 255, 65, 0.32), transparent 68%);
+}
+
+.meteor-aurora-cyan {
+  top: 8%;
+  right: -18%;
+  background: radial-gradient(ellipse, rgba(0, 229, 255, 0.3), transparent 68%);
+  animation-delay: -7s;
+}
+
+.meteor-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.meteor-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #dfffee;
+  box-shadow: 0 0 5px rgba(114, 255, 112, 0.8);
+  animation: meteor-twinkle ease-in-out infinite alternate;
+}
+
+.meteor {
+  position: absolute;
+  width: 1px;
+  height: 96px;
+  border-radius: 999px;
+  transform: rotate(42deg);
+  transform-origin: top center;
+  background: linear-gradient(to bottom, rgba(114, 255, 112, 0), rgba(114, 255, 112, 0.9), rgba(0, 229, 255, 0));
+  filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.8));
+  animation: meteor-fall linear infinite;
+}
+
+@keyframes meteor-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -120px, 0) rotate(42deg);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  58% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-240px, 720px, 0) rotate(42deg);
+  }
+}
+
+@keyframes meteor-twinkle {
+  0% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) rotate(-4deg) scale(0.96);
+  }
+  100% {
+    transform: translate3d(8%, 6%, 0) rotate(5deg) scale(1.08);
+  }
+}
+
+@keyframes meteor-sheen {
+  0%, 58% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  68% {
+    opacity: 1;
+  }
+  82%, 100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meteor {
+    animation: none;
+    opacity: 0.25;
+  }
+  .meteor-field::after,
+  .meteor-aurora,
+  .meteor-star {
+    animation: none;
+  }
+  .meteor-aurora {
+    opacity: 0.1;
+  }
+}
+
 /* Custom crisp scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
@@ -71,4 +221,3 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #00ff41;
 }
-

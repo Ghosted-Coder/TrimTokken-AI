@@ -234,15 +234,18 @@ export async function routeQuery(
   targetModelId?: string
 ): Promise<RoutingDecision> {
   const classification = classifyQueryComplexity(prompt);
-  const activeModels = models.filter((m) => m.active);
+const activeModels = models.filter(
+  (m) => m.active && !(typeof m.hasKey === 'boolean' && !m.hasKey)
+);
+const usableModels = activeModels.length > 0 ? activeModels : models;
 const qwenDecision =
   targetModelId && targetModelId !== 'auto'
     ? null
     : await askQwenRouter(prompt);
-  // Baseline frontier model (typically GPT-4o)
-  const frontierBaseline = models.find((m) => m.id === config.frontierBaselineModelId) || models[0];
+// Baseline frontier model (typically GPT-4o)
+const frontierBaseline = models.find((m) => m.id === config.frontierBaselineModelId) || models[0];
 
-  // Token estimates (rough 1 token ~ 0.75 words, output estimated by complexity)
+// Token estimates (rough 1 token ~ 0.75 words, output estimated by complexity)
   const wordCount = prompt.split(/\s+/).filter(Boolean).length;
   const inputTokens = Math.max(12, Math.round(wordCount * 1.35));
 
@@ -259,22 +262,22 @@ const qwenDecision =
   const outputTokens = Math.max(20, Math.round(inputTokens * outputMultiplier));
 
   // Compute utility score for each model based on dynamic pricing & quality
- if (!frontierBaseline || activeModels.length === 0) {
-   throw new Error('No active models are available for routing');
+ if (!frontierBaseline || models.length === 0) {
+   throw new Error('No models are available for routing');
  }
 
- let selectedModel = activeModels[0];
+ let selectedModel = usableModels[0] || models[0];
  let highestScore = -Infinity;
  let qwenUsed = false;
 
  if (targetModelId && targetModelId !== 'auto') {
-   const forced = activeModels.find((model) => model.id === targetModelId);
+   const forced = usableModels.find((model) => model.id === targetModelId) || models.find((model) => model.id === targetModelId);
    if (!forced) {
-     throw new Error(`Selected model is not active or available: ${targetModelId}`);
+     throw new Error(`Selected model is not available: ${targetModelId}`);
    }
    selectedModel = forced;
  } else {
-  activeModels.forEach((model) => {
+ usableModels.forEach((model) => {
       // 1. Quality alignment score (0 to 1) with specific model archetype domain fits
     let domainFit = 0.5;
     const modelId = model.id.toLowerCase();
@@ -406,13 +409,13 @@ const qwenDecision =
     const requiresSonnetAnalysis = SONNET_ANALYSIS_SIGNALS.some((signal) =>
       prompt.toLowerCase().includes(signal)
     );
-    const sonnetModel = activeModels.find((model) => model.id === 'claude-3-5-sonnet');
+    const sonnetModel = usableModels.find((model) => model.id === 'claude-3-5-sonnet') || models.find((model) => model.id === 'claude-3-5-sonnet');
     const deterministicModel = requiresSonnetAnalysis && sonnetModel
       ? sonnetModel
       : selectedModel;
     selectedModel = deterministicModel;
     const qwenSelectedModel = qwenDecision
-      ? activeModels.find((model) => model.id === qwenDecision.model_id)
+      ? usableModels.find((model) => model.id === qwenDecision.model_id) || models.find((model) => model.id === qwenDecision.model_id)
       : undefined;
     const qwenSupportsTask =
       qwenSelectedModel &&

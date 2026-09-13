@@ -29,13 +29,13 @@ export const ArchitectureSection: React.FC = () => {
     {
       icon: Network,
       title: 'Resilient Failover Mesh',
-      tag: '99.99% UPSTREAM SLA',
+      tag: 'FAILOVER ENABLED',
       color: '#00e5ff',
       borderColor: 'border-[#00e5ff]/30',
       bgColor: 'bg-[#00e5ff]/10',
       description:
-        'Upstream 503 high-demand or 429 rate-limit spikes trigger microsecond cascading failover to secondary model candidates or synthetic grounders without dropping client connections.',
-      badge: 'Zero User Disruption',
+        'Provider errors and rate limits can fall back to secondary model candidates or the local response synthesizer.',
+      badge: 'Fallback Path Available',
     },
     {
       icon: Lock,
@@ -45,8 +45,8 @@ export const ArchitectureSection: React.FC = () => {
       borderColor: 'border-[#a855f7]/30',
       bgColor: 'bg-[#a855f7]/10',
       description:
-        'Standard OpenAI-compatible REST format. Simply swap `base_url="https://api.trimtoken.ai/v1"` into your existing LangChain, LlamaIndex, or raw client codebases.',
-      badge: 'OpenAI / Anthropic Compatible',
+        'Standard OpenAI-compatible REST format. Swap the base URL in clients that support a custom gateway endpoint.',
+      badge: 'OpenAI-Compatible API',
     },
   ];
 

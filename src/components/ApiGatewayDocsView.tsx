@@ -61,7 +61,7 @@ main();`;
   const qwenSnippet = `import os
 import requests
 
-# Direct Qwen API via Alibaba Cloud DashScope endpoint or LangChain LLM Router
+# Route a request through TrimToken's OpenAI-compatible gateway
 url = "https://api.trimtoken.ai/v1/chat/completions"
 headers = {
     "Authorization": "Bearer tt-live-token",

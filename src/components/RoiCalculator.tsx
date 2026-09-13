@@ -30,7 +30,7 @@ export const RoiCalculator: React.FC = () => {
 
   // Pricing assumptions:
   // Baseline GPT-4o: $2.50 / M input, $10.00 / M output
-  // Blended LangChain LLM Router: ~32% of baseline cost
+  // Blended TrimToken routing estimate: ~32% of baseline cost
   const naiveMonthlyInputCost = (monthlyQueries * avgInputTokens / 1_000_000) * 2.50;
   const naiveMonthlyOutputCost = (monthlyQueries * avgOutputTokens / 1_000_000) * 10.00;
   const naiveTotalMonthlySpend = naiveMonthlyInputCost + naiveMonthlyOutputCost;
@@ -237,7 +237,7 @@ export const RoiCalculator: React.FC = () => {
                   <span className="text-[#ffba20] font-bold">{formatMoney(naiveTotalMonthlySpend)} / mo</span>
                 </div>
                 <div className="flex justify-between text-[#b9ccb2]">
-                  <span>With LangChain LLM Router:</span>
+                  <span>With TrimToken routing:</span>
                   <span className="text-[#00e5ff] font-bold">{formatMoney(neuralMonthlySpend)} / mo</span>
                 </div>
                 <div className="flex justify-between text-[#dfe2eb] font-bold pt-2 border-t border-[#3b4b37]/40">
@@ -260,4 +260,3 @@ export const RoiCalculator: React.FC = () => {
     </section>
   );
 };
-

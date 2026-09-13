@@ -74,10 +74,50 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
   const devUrl = 'https://ais-dev-3q7zg37ylydkbcgasskpdm-685413386300.asia-southeast1.run.app';
   const sharedUrl = 'https://ais-pre-3q7zg37ylydkbcgasskpdm-685413386300.asia-southeast1.run.app';
 
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedLinkType(type);
-    setTimeout(() => setCopiedLinkType(null), 2000);
+  const copyToClipboard = async (text: string, type: string) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const fallback = document.createElement('textarea');
+        fallback.value = text;
+        fallback.setAttribute('readonly', '');
+        fallback.style.position = 'fixed';
+        fallback.style.opacity = '0';
+        document.body.appendChild(fallback);
+        fallback.select();
+        document.execCommand('copy');
+        fallback.remove();
+      }
+      setCopiedLinkType(type);
+      setTimeout(() => setCopiedLinkType(null), 2000);
+    } catch {
+      setCopiedLinkType(null);
+    }
+  };
+
+  const getCurrentPageUrl = () => (
+    typeof window !== 'undefined' ? window.location.href : ''
+  );
+
+  const handleShareCurrentPage = async () => {
+    const url = getCurrentPageUrl();
+    if (!url) return;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'TrimToken AI - Cost-Aware LLM Gateway',
+          text: 'Explore this TrimToken AI routing workspace.',
+          url,
+        });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+      }
+    }
+
+    await copyToClipboard(url, 'page');
   };
 
   // Close dropdown on click outside
@@ -395,16 +435,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
 
                 <div className="pt-2 border-t border-[#3b4b37]/60 text-center">
                   <button
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: 'TrimToken — Neural Cost-Optimized LLM Routing',
-                          url: window.location.href
-                        }).catch(() => {});
-                      } else {
-                        copyToClipboard(window.location.href, 'page');
-                      }
-                    }}
+                    onClick={handleShareCurrentPage}
                     className="w-full py-1.5 rounded-lg bg-[#00ff41]/15 hover:bg-[#00ff41] text-[#00ff41] hover:text-[#003907] font-mono-data text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Share2 className="w-3.5 h-3.5" />

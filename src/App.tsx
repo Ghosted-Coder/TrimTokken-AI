@@ -24,6 +24,7 @@ import { WebsiteFooter } from './components/WebsiteFooter';
 import { StartupAnimation } from './components/StartupAnimation';
 import { AuthPage } from './components/AuthPage';
 import { EmployeeActivityDashboard } from './components/EmployeeActivityDashboard';
+import { MeteorShower } from './components/MeteorShower';
 
 import { ModelPricing, RouterConfig, RoutingDecision, AggregatedStats, UserAccount } from './types';
 import { INITIAL_MODELS, FRONTIER_BASELINE_ID } from './lib/modelsData';
@@ -123,10 +124,7 @@ export default function App() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data.models) && data.models.length > 0) {
-          setModels(data.models.map((m: ModelPricing) => ({
-            ...m,
-            active: true
-          })));
+          setModels(data.models as ModelPricing[]);
         }
       })
       .catch(() => {
@@ -156,13 +154,13 @@ export default function App() {
     );
   }, [models, routerConfig]);
 
-  // Telemetry state reflecting both user questions and benchmark replicas
+  // Telemetry state reflecting both user questions and benchmark traffic
   const [naiveCostTotal, setNaiveCostTotal] = useState(0);
   const [realizedCostTotal, setRealizedCostTotal] = useState(0);
   const [totalTokensProcessed, setTotalTokensProcessed] = useState(0);
   const [totalQueries, setTotalQueries] = useState(0);
 
-  // Simultaneous queries stream (User questions + Benchmark replicas)
+  // Simultaneous queries stream (user questions + benchmark traffic)
   const [queries, setQueries] = useState<RoutingDecision[]>([]);
 
   // Model & Complexity counters for aggregated statistics
@@ -235,7 +233,7 @@ export default function App() {
     }));
   };
 
-  // Simultaneous background traffic simulation loop for enterprise benchmark replicas
+  // Simultaneous background traffic simulation loop for enterprise benchmark traffic
   const sampleIndexRef = useRef(5);
   useEffect(() => {
     if (!routerConfig.isSimulating) return;
@@ -367,6 +365,7 @@ export default function App() {
 
   return (
     <div className="bg-[#080c10] text-[#dfe2eb] min-h-screen font-body flex flex-col selection:bg-[#00ff41]/25 selection:text-[#72ff70] relative bg-grid-cyber ambient-glow-green">
+      <MeteorShower />
       {/* Startup Opening Animation Matching Video Emblem */}
       <StartupAnimation
         isOpen={showStartupAnimation}

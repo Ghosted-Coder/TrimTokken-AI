@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, TrendingUp, Zap, Clock, ShieldCheck, PieChart, DollarSign } from 'lucide-react';
+import { BarChart3, TrendingUp, Zap, Clock, ShieldCheck, PieChart, DollarSign, Download, Info } from 'lucide-react';
 import { AggregatedStats, ModelPricing } from '../types';
 
 interface AnalyticsViewProps {
@@ -24,12 +24,34 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ stats, models }) =
   const enterpriseTokensTotal = 942180400 + stats.totalTokensProcessed;
 
   const total = Math.max(1, stats.totalQueries);
+  const lastUpdated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const handleExportAnalytics = () => {
+    const rows = [
+      ['Metric', 'Value'],
+      ['Enterprise queries', enterpriseQueriesTotal],
+      ['Enterprise tokens', enterpriseTokensTotal],
+      ['Baseline burn', totalNaive.toFixed(2)],
+      ['Realized spend', totalRealized.toFixed(2)],
+      ['Budget retained', totalSaved.toFixed(2)],
+      ['Retention percentage', percentRetained.toFixed(1)],
+    ];
+    const csv = rows.map((row) => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `trimtoken-analytics-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
       {/* Top Banner */}
       <div className="glass-panel rounded-xl p-6 border border-[#00ff41]/30 bg-gradient-to-r from-[#142018] via-[#1c2026] to-[#10141a]">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
           <span className="w-9 h-9 rounded-lg bg-[#00ff41]/15 border border-[#00ff41]/40 flex items-center justify-center text-[#00ff41]">
             <BarChart3 className="w-5 h-5" />
           </span>
@@ -38,9 +60,25 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ stats, models }) =
               Enterprise Cost & Telemetry Analytics
             </h2>
             <p className="text-xs font-mono-data text-[#b9ccb2]">
-              Real-time audit log of company-wide token burn, model distribution, and latency gains.
+              Current workspace telemetry for token burn, model distribution, and latency gains.
             </p>
           </div>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-center">
+            <span className="text-[10px] font-mono-data text-[#ffda72] bg-[#ffba20]/10 border border-[#ffba20]/30 rounded px-2 py-1 flex items-center gap-1">
+              <Info className="w-3 h-3" /> DEMO DATA
+            </span>
+            <button
+              type="button"
+              onClick={handleExportAnalytics}
+              className="text-[10px] font-mono-data text-[#00e5ff] border border-[#00e5ff]/30 rounded px-2 py-1 hover:bg-[#00e5ff]/10 transition-colors flex items-center gap-1"
+            >
+              <Download className="w-3 h-3" /> Export CSV
+            </button>
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-[#3b4b37]/30 text-[10px] font-mono-data text-[#869683]">
+          Last updated {lastUpdated} • Values combine workspace activity with illustrative enterprise seed data.
         </div>
       </div>
 

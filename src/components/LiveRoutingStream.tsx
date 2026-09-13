@@ -49,6 +49,12 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
 
   const userQueryCount = queries.filter((q) => q.source === 'USER').length;
   const benchmarkQueryCount = queries.filter((q) => q.source !== 'USER').length;
+  const hasActiveFilters = Boolean(searchTerm) || selectedComplexityFilter !== 'ALL' || selectedSourceFilter !== 'ALL';
+
+  const clearFilters = () => {
+    setSelectedComplexityFilter('ALL');
+    setSelectedSourceFilter('ALL');
+  };
 
   const getComplexityBadge = (complexity: QueryComplexity) => {
     switch (complexity) {
@@ -232,11 +238,68 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               No matching queries found in current filter
             </h3>
             <p className="font-body text-xs text-[#b9ccb2]/70 max-w-md mb-5 leading-relaxed">
-              Try switching the origin filter or typing a problem in the Manual Query box above.
+              {hasActiveFilters
+                ? 'Try clearing the active filters or typing a problem in the Manual Query box above.'
+                : 'Run a query in the Manual Query box above to start building your routing history.'}
             </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="rounded-lg border border-[#00e5ff]/40 px-3 py-1.5 text-[11px] font-mono-data text-[#00e5ff] hover:bg-[#00e5ff]/10 transition-colors"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         ) : (
-          <table className="w-full text-left font-mono-data text-xs whitespace-nowrap">
+          <>
+          <div className="md:hidden space-y-2 p-3">
+            {filteredQueries.map((q) => {
+              const isExpanded = expandedRowId === q.id;
+              const isUser = q.source === 'USER';
+              return (
+                <article
+                  key={q.id}
+                  className={`rounded-lg border p-3 ${isExpanded ? 'border-[#00ff41]/50 bg-[#00ff41]/[0.04]' : 'border-[#3b4b37]/40 bg-[#0b1119]'}`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedRowId(isExpanded ? null : q.id)}
+                    className="w-full text-left"
+                    aria-expanded={isExpanded}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${isUser ? 'bg-[#00ff41]/20 text-[#00ff41]' : 'bg-[#00e5ff]/10 text-[#00e5ff]'}`}>
+                            {isUser ? 'YOU' : 'BENCHMARK'}
+                          </span>
+                          <span className="text-[10px] text-[#869683]">{q.timestamp}</span>
+                        </div>
+                        <p className="text-xs text-white truncate">"{q.prompt}"</p>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 shrink-0 text-[#b9ccb2] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      {getComplexityBadge(q.complexity)}
+                      <span className="text-[10px] font-bold" style={{ color: q.routedModel.color }}>{q.routedModel.name}</span>
+                      <span className="ml-auto text-[10px] text-[#00ff41]">{q.latencyMs}ms</span>
+                    </div>
+                  </button>
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-[#3b4b37]/40 grid grid-cols-2 gap-2 text-[10px]">
+                      <div><span className="text-[#869683] block">SIMILARITY</span><strong className="text-[#00e5ff]">{(q.vectorSimilarity * 100).toFixed(1)}%</strong></div>
+                      <div><span className="text-[#869683] block">SAVED</span><strong className="text-[#00ff41]">{q.savingsPercentage.toFixed(1)}%</strong></div>
+                      <div><span className="text-[#869683] block">ROUTED COST</span><strong className="text-[#ffba20]">${q.realizedCost.toFixed(5)}</strong></div>
+                      <div><span className="text-[#869683] block">TOKENS</span><strong className="text-white">{q.inputTokens} / {q.outputTokens}</strong></div>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+          <table className="hidden md:table w-full text-left font-mono-data text-xs whitespace-nowrap">
             <thead className="text-[11px] text-[#b9ccb2] bg-[#10141a]/90 sticky top-0 z-10 border-b border-[#3b4b37]/60 backdrop-blur-md">
               <tr>
                 <th className="px-4 py-3">ORIGIN / TIME</th>
@@ -256,6 +319,15 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                   <React.Fragment key={q.id}>
                     <tr
                       onClick={() => setExpandedRowId(isExpanded ? null : q.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setExpandedRowId(isExpanded ? null : q.id);
+                        }
+                      }}
+                      tabIndex={0}
+                      aria-expanded={isExpanded}
+                      aria-label={`View routing details for ${q.prompt}`}
                       className={`hover:bg-[#353940]/25 transition-colors cursor-pointer ${
                         isExpanded ? 'bg-[#00ff41]/[0.04]' : isUser ? 'bg-[#00ff41]/[0.02]' : ''
                       }`}
@@ -268,7 +340,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                             </span>
                           ) : (
                             <span className="bg-[#00e5ff]/10 text-[#00e5ff] border border-[#00e5ff]/30 px-1.5 py-0.5 rounded text-[9px] font-medium tracking-wider">
-                              REPLICA
+                              BENCHMARK
                             </span>
                           )}
                           <span>{q.timestamp}</span>
@@ -366,6 +438,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               })}
             </tbody>
           </table>
+          </>
         )}
       </div>
     </div>

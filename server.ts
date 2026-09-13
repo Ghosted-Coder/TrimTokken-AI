@@ -4,6 +4,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { generateComprehensiveAnswer } from './src/lib/knowledgeSynthesizer';
+import { classifyQueryComplexity } from './src/lib/routerEngine';
 
 dotenv.config();
 
@@ -398,7 +399,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: '256kb' }));
 
   // Health Check Endpoints
   app.get(['/healthz', '/_health', '/api/health'], (req, res) => {
@@ -453,6 +454,8 @@ async function startServer() {
   // Route classification through the local fine-tuned Qwen service.
   // Qwen returns a destination only; it never generates the user-facing answer.
   app.post('/api/route', async (req, res) => {
+    const question = typeof req.body?.question === 'string' ? req.body.question : '';
+
     try {
       const response = await fetch('http://127.0.0.1:8000/route', {
         method: 'POST',
@@ -460,16 +463,33 @@ async function startServer() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: req.body?.question,
+          question,
         }),
       });
 
       const body = await response.text();
+      if (!response.ok) {
+        throw new Error(`Qwen router returned HTTP ${response.status}`);
+      }
+
       res.status(response.status).type('application/json').send(body);
     } catch (error) {
-      console.error('Local fine-tuned Qwen router unavailable:', error);
-      res.status(503).json({
-        error: 'The local fine-tuned Qwen routing service is unavailable.',
+      console.warn('Local fine-tuned Qwen router unavailable; using deterministic fallback route.', error);
+      const complexity = classifyQueryComplexity(question).complexity;
+      const fallbackMap: Record<string, string> = {
+        SIMPLE: 'llama-3-8b',
+        EXTRACTION: 'gemini-flash',
+        REASONING: 'deepseek-v3',
+        CODE: 'qwen-2.5-coder-32b',
+        CREATIVE: 'claude-3-5-sonnet',
+        COMPLEX: 'gpt-4o',
+      };
+
+      res.status(200).json({
+        model_id: fallbackMap[complexity] || 'gpt-4o',
+        reason: 'Local Qwen router unavailable; deterministic fallback selected.',
+        complexity,
+        router: 'fallback',
       });
     }
   });
@@ -490,8 +510,15 @@ async function startServer() {
   // Execute manual query with dynamic routed AI generation (supporting GPT-4o, Claude 3.5, DeepSeek, Groq Llama, Qwen, Gemini)
   app.post('/api/generate', async (req, res) => {
     const startTime = Date.now();
+    const { prompt, modelId, modelName, provider, complexity } = req.body ?? {};
+    if (typeof prompt !== 'string' || prompt.trim().length === 0) {
+      return res.status(400).json({ error: 'A non-empty prompt is required.' });
+    }
+    if (prompt.length > 100_000) {
+      return res.status(413).json({ error: 'Prompt exceeds the 100,000 character limit.' });
+    }
+
     try {
-      const { prompt, modelId, modelName, provider, complexity } = req.body;
       const targetModelTitle = modelName || modelId || 'Designated Provider Model';
       const mId = (modelId || '').toLowerCase();
       const openAiKey = process.env.OPENAI_API_KEY;
@@ -693,7 +720,7 @@ async function startServer() {
       const directAnswer = synthesizeDirectAnswer(req.body?.prompt || 'Query', req.body?.complexity, req.body?.modelName, req.body?.provider);
       res.json({
         text: directAnswer,
-        modelUsed: req.body?.modelName || 'LangChain LLM Routed',
+        modelUsed: req.body?.modelName || 'TrimToken Routed LLM',
         liveApi: false,
         promptTokens: 15,
         completionTokens: 35,
@@ -712,10 +739,10 @@ async function startServer() {
       id: `chatcmpl-lc-${Date.now()}`,
       object: 'chat.completion',
       created: Math.floor(Date.now() / 1000),
-      model: 'langchain-llm-router',
+      model: 'trimtoken-router',
       router_meta: {
         status: 'ROUTED',
-        router_engine: 'LangChain LLMRouterChain',
+        router_engine: 'TrimToken deterministic router',
         routed_model: 'llama-3-8b',
         cost_savings: '99.0% vs GPT-4o'
       },
@@ -749,7 +776,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`LangChain LLM Router Gateway running on http://0.0.0.0:${PORT}`);
+    console.log(`TrimToken gateway running on http://0.0.0.0:${PORT}`);
   });
 }
 

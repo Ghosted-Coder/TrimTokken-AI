@@ -20,6 +20,7 @@ import {
   Server
 } from 'lucide-react';
 import { TrimTokenLogo } from './TrimTokenLogo';
+import { MeteorShower } from './MeteorShower';
 import { UserAccount } from '../types';
 
 interface AuthPageProps {
@@ -27,7 +28,7 @@ interface AuthPageProps {
   onContinueAsGuest?: () => void;
 }
 
-export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
+export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAsGuest }) => {
   const [authRole, setAuthRole] = useState<'admin' | 'employee'>('admin');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
 
@@ -209,6 +210,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen bg-[#080c10] text-[#dfe2eb] flex flex-col justify-between selection:bg-[#00ff41]/25 selection:text-[#72ff70] relative overflow-hidden bg-grid-cyber">
+      <MeteorShower />
       {/* Ambient background glow accents */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-[#00ff41]/5 rounded-full blur-[140px] pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#00e5ff]/5 rounded-full blur-[130px] pointer-events-none"></div>
@@ -270,7 +272,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
 
               <div className="p-3.5 rounded-xl bg-[#14181f]/80 border border-[#3b4b37]/60 flex flex-col">
                 <span className="text-[11px] font-mono-data text-[#869683]">INTELLIGENT FALLBACK</span>
-                <span className="text-base font-bold font-mono-data text-[#00e5ff] mt-0.5">99.99% Upstream SLA</span>
+                <span className="text-base font-bold font-mono-data text-[#00e5ff] mt-0.5">Transparent routing controls</span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-[#14181f]/80 border border-[#3b4b37]/60 flex flex-col">
@@ -287,7 +289,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
 
           {/* Right Column: Focused Authentication Card */}
           <div className="lg:col-span-6 w-full max-w-lg mx-auto">
-            <div className={`glass-panel rounded-2xl p-6 sm:p-8 border shadow-[0_0_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 ${
+            <div className={`glass-panel rounded-2xl p-6 sm:p-8 border shadow-[0_0_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(0,229,255,0.12)] ${
               authRole === 'admin' ? 'border-[#00ff41]/40' : 'border-[#00e5ff]/40'
             }`}>
             {/* Corner accent glow */}
@@ -779,6 +781,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
                     </span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
+                  {onContinueAsGuest && mode === 'signin' && (
+                    <button
+                      type="button"
+                      onClick={onContinueAsGuest}
+                      disabled={isLoading}
+                      className="w-full py-2.5 px-4 rounded-xl border border-[#3b4b37]/70 text-[#b9ccb2] hover:text-white hover:border-[#869683] font-mono-data text-xs transition-colors disabled:opacity-50 mt-2"
+                    >
+                      Continue in sandbox mode
+                    </button>
+                  )}
                 </form>
               </>
             )}
@@ -842,7 +854,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       <footer className="w-full border-t border-[#3b4b37]/30 bg-[#090d13]/60 py-3 px-6 text-center text-[11px] font-mono-data text-[#869683] flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-3.5 h-3.5 text-[#00ff41]" />
-          <span>SOC-2 Type II Certified • Role-Based Access Control (RBAC) Enabled</span>
+          <span>Demo authentication • Role-based dashboard access</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="hover:text-white cursor-pointer">Admin Policies</span>

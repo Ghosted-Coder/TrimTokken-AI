@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
-import { Bolt, Sparkles, Check, Copy, Terminal, ArrowDown, ArrowRight, Zap, ChevronDown, Cpu, Bot, Compass, Layers, ShieldCheck } from 'lucide-react';
+import { Bolt, Sparkles, Check, Copy, Terminal, ArrowDown, ArrowRight, Zap, ChevronDown, Cpu, Bot, Compass, Layers, ShieldCheck, XCircle, Clock3 } from 'lucide-react';
 import { ModelPricing, RoutingDecision, RouterConfig } from '../types';
 import { routeQuery } from '../lib/routerEngine';
 
@@ -23,6 +23,8 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [latestDecision, setLatestDecision] = useState<RoutingDecision | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [executionStage, setExecutionStage] = useState<'idle' | 'classifying' | 'selecting' | 'generating' | 'complete' | 'error'>('idle');
+  const [executionError, setExecutionError] = useState<string | null>(null);
   const [liveResponseText, setLiveResponseText] = useState<string | null>(null);
   const [copiedAnswer, setCopiedAnswer] = useState(false);
   const [highlightAnswer, setHighlightAnswer] = useState(false);
@@ -36,6 +38,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
 
   const answerPanelRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -68,11 +71,22 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
     const targetModelToUse = forceTargetModel !== undefined ? forceTargetModel : selectedTargetModel;
 
     setIsExecuting(true);
+    setExecutionStage('classifying');
+    setExecutionError(null);
     setLiveResponseText(null);
     setLiveMetadata(null);
 
     // 1. Run routing classification (with optional targeted model override)
-    const decision = await routeQuery(text, models, routerConfig, undefined, 'USER', targetModelToUse);
+    let decision: RoutingDecision;
+    try {
+      decision = await routeQuery(text, models, routerConfig, undefined, 'USER', targetModelToUse);
+    } catch (error) {
+      setExecutionStage('error');
+      setExecutionError(error instanceof Error ? error.message : 'Routing failed. Check active providers.');
+      setIsExecuting(false);
+      return;
+    }
+    setExecutionStage('selecting');
     setLatestDecision(decision);
 
     // Scroll immediately to show the routing in progress & prepare answer panel
@@ -80,6 +94,9 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
 
     // 2. Query backend for real live execution & direct problem solution
     try {
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setExecutionStage('generating');
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,7 +107,12 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
           provider: decision.routedModel.provider,
           complexity: decision.complexity,
         }),
+        signal: controller.signal,
       });
+      if (!res.ok) {
+        const errorBody = await res.json().catch(() => null);
+        throw new Error(errorBody?.error || `Generation failed with HTTP ${res.status}`);
+      }
       const data = await res.json();
       
       const answerText = data?.text || decision.responseSnippet || 'Solved with optimal routing.';
@@ -114,19 +136,32 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
         completionTokens: data?.completionTokens || decision.outputTokens,
         executionTimeMs: data?.executionTimeMs || decision.latencyMs,
       });
+      setExecutionStage('complete');
 
       onExecuteManualQuery(updatedDecision);
 
       // Re-scroll upon answer arrival to ensure answer panel is fully in focus
       scrollToAnswerPanel();
     } catch (e) {
-      const fallbackText = decision.responseSnippet || 'Solved with optimal routing.';
-      setLiveResponseText(fallbackText);
-      onExecuteManualQuery(decision);
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        setExecutionError('Request cancelled.');
+      } else {
+        setExecutionError(e instanceof Error ? e.message : 'Generation failed.');
+      }
+      setExecutionStage('error');
+      setLiveResponseText(null);
       scrollToAnswerPanel();
     } finally {
+      abortControllerRef.current = null;
       setIsExecuting(false);
     }
+  };
+
+  const handleCancel = () => {
+    abortControllerRef.current?.abort();
+    setIsExecuting(false);
+    setExecutionStage('error');
+    setExecutionError('Request cancelled.');
   };
 
   // Listen for external trigger from Top Search Bar
@@ -274,10 +309,77 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
                 </div>
               </div>
             )}
+            {latestDecision && (
+              <div className="mt-3 flex flex-col sm:flex-row gap-1.5 text-[10px] font-mono-data" aria-label="Routing decision explanation">
+                {[
+                  ['1', 'Prompt', inputPrompt.trim() ? 'received' : 'waiting'],
+                  ['2', 'Complexity', latestDecision.complexity],
+                  ['3', 'Evidence', `${(latestDecision.vectorSimilarity * 100).toFixed(0)}% match`],
+                  ['4', 'Quality', 'threshold passed'],
+                  ['5', 'Selected', latestDecision.routedModel.name],
+                ].map(([step, label, value], index) => (
+                  <React.Fragment key={label}>
+                    {index > 0 && <ArrowRight className="hidden sm:block w-3 h-3 self-center shrink-0 text-[#3b4b37]" />}
+                    <div className="rounded border border-[#3b4b37]/50 bg-[#0b1119] px-2 py-1.5 min-w-0 flex-1">
+                      <span className="text-[#869683] block">{step}. {label}</span>
+                      <strong className="text-white truncate block" title={value}>{value}</strong>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick presets for testing all different LLMs */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+           <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-[#3b4b37]/40 bg-[#0b1119]/70 p-2" aria-live="polite">
+          <span className="text-[10px] font-mono-data text-[#b9ccb2]/70 uppercase tracking-wider mr-1">Live status</span>
+          {(['classifying', 'selecting', 'generating', 'complete'] as const).map((stage, index) => (
+            <React.Fragment key={stage}>
+              {index > 0 && <ArrowRight className="w-3 h-3 text-[#3b4b37]" />}
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono-data border ${
+                executionStage === stage
+                  ? 'border-[#00ff41]/50 bg-[#00ff41]/15 text-[#72ff70]'
+                  : executionStage === 'complete' && index < 3
+                    ? 'border-[#00ff41]/30 text-[#00ff41]/70'
+                    : 'border-[#3b4b37]/40 text-[#869683]'
+              }`}>
+                {stage}
+              </span>
+            </React.Fragment>
+          ))}
+          {isExecuting && (
+            <button type="button" onClick={handleCancel} className="ml-auto text-[10px] font-mono-data text-[#ffb4ab] hover:text-white flex items-center gap-1">
+              <XCircle className="w-3 h-3" /> Cancel
+            </button>
+          )}
+          {executionError && (
+            <div className="w-full flex items-center justify-between gap-2 text-[10px] text-[#ffb4ab]">
+              <span>{executionError}</span>
+              {inputPrompt.trim() && (
+                <button
+                  type="button"
+                  onClick={() => handleRoute()}
+                  disabled={isExecuting}
+                  className="shrink-0 rounded border border-[#ffb4ab]/40 px-2 py-1 text-[#ffb4ab] hover:bg-[#ffb4ab]/10 hover:text-white disabled:opacity-50"
+                >
+                  Retry
+                </button>
+              )}
+            </div>
+          )}
+           </div>
+
+           {latestDecision && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono-data">
+            <div className="rounded-lg border border-[#3b4b37]/40 bg-[#0b1119]/70 p-2"><span className="text-[#869683] block">COMPLEXITY</span><strong className="text-[#abc7ff]">{latestDecision.complexity}</strong></div>
+            <div className="rounded-lg border border-[#3b4b37]/40 bg-[#0b1119]/70 p-2"><span className="text-[#869683] block">CONFIDENCE</span><strong className="text-[#00e5ff]">{(latestDecision.vectorSimilarity * 100).toFixed(0)}%</strong></div>
+            <div className="rounded-lg border border-[#3b4b37]/40 bg-[#0b1119]/70 p-2"><span className="text-[#869683] block">EST. COST</span><strong className="text-[#ffba20]">${latestDecision.realizedCost.toFixed(5)}</strong></div>
+            <div className="rounded-lg border border-[#3b4b37]/40 bg-[#0b1119]/70 p-2"><span className="text-[#869683] block">SAVED</span><strong className="text-[#00ff41]">{latestDecision.savingsPercentage.toFixed(0)}%</strong></div>
+          </div>
+           )}
+
+           {/* Quick presets for testing all different LLMs */}
+          <div className="flex flex-wrap items-center gap-1.5 mt-1" role="status" aria-live="polite">
             <span className="text-[11px] font-mono-data text-[#b9ccb2]/60 mr-1 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-[#ffba20]" />
               Presets:
@@ -470,7 +572,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-[#00ff41] animate-pulse"></span>
                   Fine-tuned Qwen Routing Engine Online
                 </span>
-                <span>Latency SLA: &lt; 300ms | 100% SLA Guarantee</span>
+                <span>Typical demo latency: &lt; 300ms | Provider-dependent</span>
               </div>
             </motion.div>
           )}

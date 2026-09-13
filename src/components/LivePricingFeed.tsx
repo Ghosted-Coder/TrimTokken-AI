@@ -68,6 +68,11 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
       </div>
 
       {/* Models Price Table */}
+      {models.every((model) => !model.active) && (
+        <div className="mb-3 rounded-lg border border-[#ffba20]/40 bg-[#ffba20]/10 p-3 text-[11px] font-mono-data text-[#ffda72]" role="status">
+          No providers are active. Enable a provider or configure an API key before sending live traffic.
+        </div>
+      )}
       <ul className="space-y-2.5 font-mono-data text-xs flex-grow overflow-y-auto max-h-[340px] pr-1">
         {models.map((model) => {
           const isLlama = model.id === 'llama-3-8b';
@@ -103,8 +108,12 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-[#b9ccb2]/70">
+                  <span className="text-[10px] text-[#b9ccb2]/70 flex items-center gap-1.5">
                     {model.provider} • {model.latencyAvgMs}ms
+                    <span className={`inline-flex items-center gap-1 ${!isActive ? 'text-[#869683]' : model.hasKey === false ? 'text-[#ffba20]' : 'text-[#00ff41]'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${!isActive ? 'bg-[#869683]' : model.hasKey === false ? 'bg-[#ffba20]' : 'bg-[#00ff41]'}`} />
+                      {!isActive ? 'OFFLINE' : model.hasKey === false ? 'NO KEY' : 'ONLINE'}
+                    </span>
                   </span>
                 </div>
               </div>

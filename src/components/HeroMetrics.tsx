@@ -53,17 +53,31 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
   const currentSavings = enterpriseSavedBase + (dollarsSaved * 850);
   const currentPercentRetained = currentNaiveSpend > 0 ? (currentSavings / currentNaiveSpend) * 100 : 71.3;
   
-  // Smooth micro-increment transitions
+  // Smoothly animate headline ledger values when new traffic arrives.
   useEffect(() => {
-    setNaiveDisplay(currentNaiveSpend);
-    setRealizedDisplay(currentActualSpend);
+    const startNaive = naiveDisplay;
+    const startRealized = realizedDisplay;
+    const startedAt = performance.now();
+    const duration = 650;
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setNaiveDisplay(startNaive + (currentNaiveSpend - startNaive) * eased);
+      setRealizedDisplay(startRealized + (currentActualSpend - startRealized) * eased);
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
 
     // Trigger celebratory confetti on major enterprise milestone intervals ($500, $2500)
     if (dollarsSaved > 2.5 && lastSaved < 2.5) {
       confetti({ particleCount: 35, spread: 50, origin: { y: 0.3 } });
     }
     setLastSaved(dollarsSaved);
-  }, [naiveCost, realizedCost, dollarsSaved, currentNaiveSpend, currentActualSpend]);
+    return () => cancelAnimationFrame(frame);
+  }, [dollarsSaved, currentNaiveSpend, currentActualSpend]);
 
   const formatCurrency = (val: number) => {
     if (val === 0) return '$0.00';
@@ -371,4 +385,3 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
     </section>
   );
 };
-

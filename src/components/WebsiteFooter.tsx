@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { Activity, ArrowUpRight } from 'lucide-react';
 import { TrimTokenLogo } from './TrimTokenLogo';
 
 interface WebsiteFooterProps {
@@ -27,7 +27,7 @@ export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) =
             </p>
             <div className="flex items-center gap-2 text-[10px] text-[#00e5ff] bg-[#00e5ff]/10 px-2.5 py-1 rounded-full border border-[#00e5ff]/30 w-fit">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e5ff] animate-pulse"></span>
-              ALL SYSTEMS OPERATIONAL (99.99%)
+              DEMO GATEWAY STATUS: ONLINE
             </div>
           </div>
 
@@ -125,7 +125,7 @@ export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) =
               </code>
             </div>
             <p className="text-[10px] text-[#b9ccb2]/70">
-              Compatible with LangChain, LiteLLM, LlamaIndex, and raw OpenAI SDKs.
+              Compatible with OpenAI-compatible clients that support a custom base URL.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) =
           </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#00ff41]" /> SOC2 Ready Architecture
+              <Activity className="w-3.5 h-3.5 text-[#00ff41]" /> Demo environment
             </span>
             <span>•</span>
             <span>Zero Data Logging Policy</span>
