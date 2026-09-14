@@ -18,12 +18,14 @@ export const MeteorShower: React.FC = () => (
         />
       ))}
     </div>
-    {Array.from({ length: 18 }, (_, index) => (
+    {Array.from({ length: 12 }, (_, index) => (
       <span
         key={index}
-        className="meteor"
+        className={`meteor ${index % 2 === 0 ? 'meteor-edge-left' : 'meteor-edge-right'}`}
         style={{
-          left: `${4 + ((index * 17) % 94)}%`,
+          left: index % 2 === 0
+            ? `${2 + ((index * 7) % 11)}%`
+            : `${87 + ((index * 7) % 11)}%`,
           top: `${-8 + ((index * 23) % 58)}%`,
           animationDelay: `${(index * 0.73) % 7}s`,
           animationDuration: `${4.8 + (index % 5) * 0.8}s`,

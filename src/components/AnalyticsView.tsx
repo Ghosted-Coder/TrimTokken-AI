@@ -47,7 +47,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ stats, models }) =
   };
 
   return (
-    <div className="space-y-6">
+    <div className="analytics-surface space-y-6">
       {/* Top Banner */}
       <div className="glass-panel rounded-xl p-6 border border-[#00ff41]/30 bg-gradient-to-r from-[#142018] via-[#1c2026] to-[#10141a]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

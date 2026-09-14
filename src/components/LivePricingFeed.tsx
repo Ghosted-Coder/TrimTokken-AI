@@ -16,7 +16,7 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
   isGpt4oSlashed
 }) => {
   return (
-    <div className="glass-panel rounded-xl p-4 md:p-5 flex flex-col h-full border border-[#3b4b37]/60 bg-[#1c2026]/40">
+    <div className="glass-panel rounded-xl p-3 md:p-4 flex flex-col h-full border border-[#3b4b37]/60 bg-[#1c2026]/40">
       {/* Header */}
       <div className="border-b border-[#3b4b37]/50 pb-3 mb-3.5 flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -39,7 +39,7 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
       </div>
 
       {/* Interactive Hackathon Price Cut Simulator Banner */}
-      <div className="mb-4 bg-gradient-to-r from-[#142018] to-[#1c2026] p-3 rounded-lg border border-[#00ff41]/30">
+      <div className="mb-3 bg-gradient-to-r from-[#142018] to-[#1c2026] p-2.5 rounded-lg border border-[#00ff41]/30">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[11px] font-mono-data text-[#72ff70] font-bold flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5 text-[#00ff41]" />
@@ -51,7 +51,7 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
             </span>
           )}
         </div>
-        <p className="text-[11px] font-body text-[#b9ccb2]/90 mb-2">
+        <p className="text-[10px] font-body text-[#b9ccb2]/90 mb-2">
           Simulate OpenAI slashing GPT-4o prices mid-hackathon to see neural routing recalculate thresholds in real time!
         </p>
         <button
@@ -73,7 +73,7 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
           No providers are active. Enable a provider or configure an API key before sending live traffic.
         </div>
       )}
-      <ul className="space-y-2.5 font-mono-data text-xs flex-grow overflow-y-auto max-h-[340px] pr-1">
+      <ul className="space-y-2 font-mono-data text-[11px] flex-grow overflow-y-auto max-h-[340px] pr-1">
         {models.map((model) => {
           const isLlama = model.id === 'llama-3-8b';
           const isSlashed = model.id === 'gpt-4o' && isGpt4oSlashed;
@@ -82,7 +82,7 @@ export const LivePricingFeed: React.FC<LivePricingFeedProps> = ({
           return (
             <li
               key={model.id}
-              className={`flex justify-between items-center p-2.5 rounded-lg border transition-all ${
+              className={`flex justify-between items-center p-2 rounded-lg border transition-all ${
                 !isActive
                   ? 'opacity-40 bg-[#181c22]/30 border-[#3b4b37]/20 grayscale-[0.5]'
                   : isLlama

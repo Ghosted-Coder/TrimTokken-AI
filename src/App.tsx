@@ -3,28 +3,29 @@
  * @license Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { TopNavBar } from './components/TopNavBar';
 import { HeroMetrics } from './components/HeroMetrics';
-import { ManualQueryPlayground } from './components/ManualQueryPlayground';
-import { LiveRoutingStream } from './components/LiveRoutingStream';
-import { LivePricingFeed } from './components/LivePricingFeed';
-import { RoutingPoliciesView } from './components/RoutingPoliciesView';
-import { AnalyticsView } from './components/AnalyticsView';
-import { PythonCodeView } from './components/PythonCodeView';
-import { ApiGatewayDocsView } from './components/ApiGatewayDocsView';
-import { SimulatorView } from './components/SimulatorView';
-import { ManageProvidersModal } from './components/ManageProvidersModal';
 import { WebsiteHero } from './components/WebsiteHero';
-import { RoiCalculator } from './components/RoiCalculator';
-import { ArchitectureSection } from './components/ArchitectureSection';
-import { BenchmarkComparison } from './components/BenchmarkComparison';
 import { WebsiteFooter } from './components/WebsiteFooter';
 import { StartupAnimation } from './components/StartupAnimation';
 import { AuthPage } from './components/AuthPage';
-import { EmployeeActivityDashboard } from './components/EmployeeActivityDashboard';
 import { MeteorShower } from './components/MeteorShower';
+
+const ManualQueryPlayground = lazy(() => import('./components/ManualQueryPlayground').then((module) => ({ default: module.ManualQueryPlayground })));
+const LiveRoutingStream = lazy(() => import('./components/LiveRoutingStream').then((module) => ({ default: module.LiveRoutingStream })));
+const LivePricingFeed = lazy(() => import('./components/LivePricingFeed').then((module) => ({ default: module.LivePricingFeed })));
+const RoutingPoliciesView = lazy(() => import('./components/RoutingPoliciesView').then((module) => ({ default: module.RoutingPoliciesView })));
+const AnalyticsView = lazy(() => import('./components/AnalyticsView').then((module) => ({ default: module.AnalyticsView })));
+const PythonCodeView = lazy(() => import('./components/PythonCodeView').then((module) => ({ default: module.PythonCodeView })));
+const ApiGatewayDocsView = lazy(() => import('./components/ApiGatewayDocsView').then((module) => ({ default: module.ApiGatewayDocsView })));
+const SimulatorView = lazy(() => import('./components/SimulatorView').then((module) => ({ default: module.SimulatorView })));
+const ManageProvidersModal = lazy(() => import('./components/ManageProvidersModal').then((module) => ({ default: module.ManageProvidersModal })));
+const RoiCalculator = lazy(() => import('./components/RoiCalculator').then((module) => ({ default: module.RoiCalculator })));
+const ArchitectureSection = lazy(() => import('./components/ArchitectureSection').then((module) => ({ default: module.ArchitectureSection })));
+const BenchmarkComparison = lazy(() => import('./components/BenchmarkComparison').then((module) => ({ default: module.BenchmarkComparison })));
+const EmployeeActivityDashboard = lazy(() => import('./components/EmployeeActivityDashboard').then((module) => ({ default: module.EmployeeActivityDashboard })));
 
 import { ModelPricing, RouterConfig, RoutingDecision, AggregatedStats, UserAccount } from './types';
 import { INITIAL_MODELS, FRONTIER_BASELINE_ID } from './lib/modelsData';
@@ -396,6 +397,15 @@ export default function App() {
       />
 
       {/* Main Content Area */}
+      <Suspense
+        fallback={
+          <div className="max-w-[1600px] w-full mx-auto px-4 md:px-6 pt-32 pb-16 flex-grow relative z-10">
+            <div className="glass-panel rounded-2xl border border-[#1e2f3d] p-8 text-center text-sm font-mono-data text-[#b9ccb2]">
+              Loading workspace...
+            </div>
+          </div>
+        }
+      >
       <main className="max-w-[1600px] w-full mx-auto px-4 md:px-6 pt-22 pb-16 flex-grow relative z-10">
         {/* Tab 1: Main Product Website & Interactive Playground */}
         {activeTab === 'dashboard' && (
@@ -420,11 +430,11 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch scroll-mt-28 pt-2 sm:pt-4"
+              className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-6 items-stretch scroll-mt-28 pt-2 sm:pt-4"
             >
-              {/* Main Column (8 cols): Manual Query Input (Employee) or Live Routing Stream (Admin) */}
-              <div className="lg:col-span-8 flex flex-col gap-6 h-full">
-                <div className="glass-panel rounded-2xl overflow-hidden flex flex-col h-full flex-grow border border-[#3b4b37]/60 shadow-[0_0_30px_rgba(0,0,0,0.45)]">
+              {/* Main Column (9 cols): Manual Query Input (Employee) or Live Routing Stream (Admin) */}
+              <div className="flex flex-col gap-6 h-full min-w-0 lg:min-h-[760px] lg:pr-4 lg:border-r-2 lg:border-[#00e5ff]/20">
+                <div className="glass-panel rounded-2xl overflow-hidden flex flex-col h-full flex-grow border border-[#00ff41]/35 shadow-[0_0_30px_rgba(0,0,0,0.45)]">
                   {/* Manual Query Playground (Employee / Standard User Exclusive) */}
                   {!isAdmin && (
                     <ManualQueryPlayground
@@ -450,14 +460,16 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Sidebar Column (4 cols): Live Dynamic Pricing Feed & k-NN Lookup */}
-              <div className="lg:col-span-4 flex flex-col gap-6 h-full">
-                <LivePricingFeed
-                  models={models}
-                  onOpenManageProviders={() => setIsManageProvidersOpen(true)}
-                  onSimulatePriceDrop={handleSimulatePriceDrop}
-                  isGpt4oSlashed={isGpt4oSlashed}
-                />
+              {/* Sidebar Column (3 cols): Compact live pricing feed */}
+              <div className="flex flex-col gap-6 h-full min-w-0 lg:-mt-6 lg:w-[280px] lg:pl-4">
+                <div className="rounded-2xl border-2 border-[#ffba20]/25 bg-[#080c12]/35 p-2 shadow-[inset_0_0_24px_rgba(255,186,32,0.04)]">
+                  <LivePricingFeed
+                    models={models}
+                    onOpenManageProviders={() => setIsManageProvidersOpen(true)}
+                    onSimulatePriceDrop={handleSimulatePriceDrop}
+                    isGpt4oSlashed={isGpt4oSlashed}
+                  />
+                </div>
               </div>
             </motion.div>
 
@@ -560,21 +572,24 @@ export default function App() {
         {/* Tab 6: API Gateway & OpenAI Drop-In Docs */}
         {activeTab === 'docs' && <ApiGatewayDocsView />}
       </main>
+      </Suspense>
 
       {/* Global Product Website Footer */}
       <WebsiteFooter onNavigateTab={handleTabChange} />
 
       {/* Manage Providers Modal */}
-      <ManageProvidersModal
-        isOpen={isManageProvidersOpen}
-        onClose={() => setIsManageProvidersOpen(false)}
-        models={models}
-        onUpdateModels={(updated) => setModels(updated)}
-        onResetToDefaults={() => {
-          setModels(INITIAL_MODELS);
-          setIsGpt4oSlashed(false);
-        }}
-      />
+      <Suspense fallback={null}>
+        <ManageProvidersModal
+          isOpen={isManageProvidersOpen}
+          onClose={() => setIsManageProvidersOpen(false)}
+          models={models}
+          onUpdateModels={(updated) => setModels(updated)}
+          onResetToDefaults={() => {
+            setModels(INITIAL_MODELS);
+            setIsGpt4oSlashed(false);
+          }}
+        />
+      </Suspense>
     </div>
   );
 }

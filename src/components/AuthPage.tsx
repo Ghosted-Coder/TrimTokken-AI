@@ -297,7 +297,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
               authRole === 'admin' ? 'from-[#00ff41]/15 to-transparent' : 'from-[#00e5ff]/15 to-transparent'
             }`}></div>
 
-            {/* TWO PRIMARY OPTIONS: LOGIN AS ADMIN VS LOGIN AS EMPLOYEE */}
+            {/* TWO PRIMARY OPTIONS: SIGN IN AS ADMIN VS SIGN IN AS EMPLOYEE */}
             <div className="mb-6">
               <label className="block text-[11px] font-mono-data text-[#869683] uppercase tracking-wider mb-2 font-bold flex items-center justify-between">
                 <span>Select Access Gateway Role:</span>
@@ -318,7 +318,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                 >
                   <div className="flex items-center gap-1.5">
                     <Shield className={`w-4 h-4 ${authRole === 'admin' ? 'text-[#00ff41]' : 'text-[#869683]'}`} />
-                    <span className="tracking-wide">LOGIN AS ADMIN</span>
+                    <span className="tracking-wide">SIGN IN AS ADMIN</span>
                   </div>
                   <span className={`text-[10px] font-normal leading-none ${authRole === 'admin' ? 'text-[#72ff70]/80' : 'text-[#869683]'}`}>
                     Security &amp; Full Control
@@ -340,7 +340,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                 >
                   <div className="flex items-center gap-1.5">
                     <Briefcase className={`w-4 h-4 ${authRole === 'employee' ? 'text-[#00e5ff]' : 'text-[#869683]'}`} />
-                    <span className="tracking-wide">LOGIN AS EMPLOYEE</span>
+                    <span className="tracking-wide">SIGN IN AS EMPLOYEE</span>
                   </div>
                   <span className={`text-[10px] font-normal leading-none ${authRole === 'employee' ? 'text-[#72f5ff]/80' : 'text-[#869683]'}`}>
                     Optimization &amp; Dev Hub

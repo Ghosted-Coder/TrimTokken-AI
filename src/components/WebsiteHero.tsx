@@ -36,8 +36,8 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const stickyDropdownRef = useRef<HTMLDivElement>(null);
   const heroFormContainerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const stickyInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const stickyInputRef = useRef<HTMLTextAreaElement>(null);
 
   // Scroll listener to activate sticky searchbar when hero search scrolls out of view
   useEffect(() => {
@@ -96,7 +96,18 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
     }
   };
 
-  const handlePromptKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const resizePrompt = (element: HTMLTextAreaElement, maxHeight: number) => {
+    element.style.height = 'auto';
+    element.style.height = `${Math.min(element.scrollHeight, maxHeight)}px`;
+    element.style.overflowY = element.scrollHeight > maxHeight ? 'auto' : 'hidden';
+  };
+
+  useEffect(() => {
+    if (inputRef.current) resizePrompt(inputRef.current, 240);
+    if (stickyInputRef.current) resizePrompt(stickyInputRef.current, 160);
+  }, [heroPrompt]);
+
+  const handlePromptKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
       event.preventDefault();
       handleHeroSubmit();
@@ -186,16 +197,17 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                     className="relative flex items-center flex-grow pl-3 sm:pl-4 pr-2 py-1.5 sm:py-2 bg-[#0d131f]/90 rounded-xl border border-[#1e2f3d] group-focus-within:border-[#00ff41] transition-all min-h-[44px]"
                   >
                     <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#00ff41] shrink-0 mr-2.5 animate-pulse" />
-                    <input
+                    <textarea
                       ref={inputRef}
-                      type="text"
                       value={heroPrompt}
                       onChange={(e) => setHeroPrompt(e.target.value)}
+                      onInput={(e) => resizePrompt(e.currentTarget, 240)}
                       onKeyDown={handlePromptKeyDown}
                       aria-label="Prompt to route"
                       placeholder="Ask anything or enter a query to route (e.g. 'What is 15 * 24?')..."
+                      rows={1}
                       data-prompt-input
-                      className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none w-full bg-transparent text-sm sm:text-base font-mono-data text-white placeholder:text-[#b9ccb2]/50"
+                      className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none resize-none overflow-hidden min-h-[30px] max-h-[240px] leading-6 w-full bg-transparent text-sm sm:text-base font-mono-data text-white placeholder:text-[#b9ccb2]/50"
                     />
                     {heroPrompt && (
                       <button
@@ -403,14 +415,17 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
                       className="flex-grow flex items-center bg-[#0d131f] border border-[#1e2f3d] focus-within:border-[#00ff41] rounded-xl px-3 py-1.5 shadow-[0_0_12px_rgba(0,0,0,0.5)] focus-within:shadow-[0_0_20px_rgba(0,255,65,0.25)] transition-all min-h-[42px]"
                     >
                       <Search className="w-4 h-4 text-[#00ff41] shrink-0 mr-2.5 animate-pulse" />
-                      <input
+                      <textarea
                         ref={stickyInputRef}
-                        type="text"
                         value={heroPrompt}
                         onChange={(e) => setHeroPrompt(e.target.value)}
+                        onInput={(e) => resizePrompt(e.currentTarget, 160)}
                         placeholder="Search, route a prompt, or enter code..."
+                        onKeyDown={handlePromptKeyDown}
+                        aria-label="Prompt to route"
+                        rows={1}
                         data-prompt-input
-                        className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none w-full bg-transparent text-xs sm:text-sm font-mono-data text-white placeholder:text-[#b9ccb2]/50"
+                        className="!outline-none !ring-0 focus:!outline-none focus-visible:!outline-none resize-none overflow-hidden min-h-[26px] max-h-[160px] leading-5 w-full bg-transparent text-xs sm:text-sm font-mono-data text-white placeholder:text-[#b9ccb2]/50"
                       />
 
                       {heroPrompt && (

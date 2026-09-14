@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
-import { Bolt, Sparkles, Check, Copy, Terminal, ArrowDown, ArrowRight, Zap, ChevronDown, Cpu, Bot, Compass, Layers, ShieldCheck, XCircle, Clock3 } from 'lucide-react';
+import { Bolt, Sparkles, Check, Copy, Terminal, ArrowDown, ArrowRight, Zap, ChevronDown, Cpu, Bot, Compass, Layers, ShieldCheck, XCircle, Clock3, X, GitBranch, Activity } from 'lucide-react';
 import { ModelPricing, RoutingDecision, RouterConfig } from '../types';
 import { routeQuery } from '../lib/routerEngine';
 
@@ -28,6 +28,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
   const [liveResponseText, setLiveResponseText] = useState<string | null>(null);
   const [copiedAnswer, setCopiedAnswer] = useState(false);
   const [highlightAnswer, setHighlightAnswer] = useState(false);
+  const [isTraceOpen, setIsTraceOpen] = useState(false);
   const [liveMetadata, setLiveMetadata] = useState<{
     liveApi: boolean;
     modelUsed?: string;
@@ -39,6 +40,19 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
   const answerPanelRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  const traceCandidates = [...models]
+    .filter((model) => model.active !== false && model.hasKey !== false)
+    .sort((a, b) => b.qualityScore - a.qualityScore)
+    .slice(0, 5);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsTraceOpen(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -200,7 +214,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
   };
 
   return (
-    <div className="p-4 md:p-6 bg-gradient-to-b from-[#00ff41]/[0.03] to-transparent flex flex-col gap-6 flex-grow h-full justify-between min-h-[560px]">
+    <div className="p-4 md:p-6 bg-gradient-to-b from-[#00ff41]/[0.03] to-transparent flex flex-col gap-6 flex-grow h-full justify-between min-h-[560px] lg:min-h-[760px]">
       <div className="flex flex-col gap-4">
         {/* Dynamic Destination & Intelligence Flow */}
         <div className="flex flex-col gap-3">
@@ -322,7 +336,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
                     {index > 0 && <ArrowRight className="hidden sm:block w-3 h-3 self-center shrink-0 text-[#3b4b37]" />}
                     <div className="rounded border border-[#3b4b37]/50 bg-[#0b1119] px-2 py-1.5 min-w-0 flex-1">
                       <span className="text-[#869683] block">{step}. {label}</span>
-                      <strong className="text-white truncate block" title={value}>{value}</strong>
+                      <strong className="text-white block whitespace-normal break-words leading-relaxed" title={value}>{value}</strong>
                     </div>
                   </React.Fragment>
                 ))}
@@ -425,7 +439,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
       </div>
 
       {/* Prominent Full Answer Panel or Employee Workspace Assistant (Fills remaining height) */}
-      <div className="flex-grow flex flex-col mt-2">
+      <div className="flex-grow flex flex-col mt-2 min-w-0">
         <AnimatePresence mode="wait">
           {(isExecuting || liveResponseText || latestDecision) ? (
             <motion.div 
@@ -436,7 +450,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 16 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              className={`bg-[#080c12] rounded-xl overflow-hidden scroll-mt-24 transition-all duration-500 border flex flex-col flex-grow ${
+              className={`bg-[#080c12] rounded-xl overflow-hidden scroll-mt-24 transition-all duration-500 border flex flex-col flex-grow min-w-0 min-h-[520px] ${
                 highlightAnswer
                   ? 'border-[#00ff41] ring-2 ring-[#00ff41]/50 shadow-[0_0_45px_rgba(0,255,65,0.3)]'
                   : 'border-[#00ff41]/40 shadow-[0_0_35px_rgba(0,255,65,0.12)]'
@@ -487,18 +501,29 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
                     {copiedAnswer ? <Check className="w-3.5 h-3.5 text-[#00ff41]" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedAnswer ? 'Copied!' : 'Copy Answer'}</span>
                   </button>
+                  {latestDecision && (
+                    <button
+                      type="button"
+                      onClick={() => setIsTraceOpen(true)}
+                      className="text-xs font-mono-data text-[#00e5ff] hover:text-white bg-[#10202b] hover:bg-[#153443] px-2.5 py-1 rounded-md border border-[#00e5ff]/30 flex items-center gap-1 transition-all cursor-pointer"
+                      aria-label="Open request trace"
+                    >
+                      <Activity className="w-3.5 h-3.5" />
+                      <span>Trace</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Answer Body */}
-              <div className="p-4 md:p-5 flex-grow overflow-y-auto max-h-[420px]">
+              <div className="p-4 md:p-5 flex-grow overflow-y-auto max-h-[620px]">
                 {isExecuting ? (
                   <div className="flex items-center gap-3 py-8 text-sm font-mono-data text-[#72ff70]">
                     <div className="w-4 h-4 rounded-full border-2 border-[#00ff41] border-t-transparent animate-spin"></div>
                     <span>Executing prompt with selected model and formulating full explanation...</span>
                   </div>
                 ) : (
-                  <div className="text-xs md:text-sm text-[#dfe2eb] leading-relaxed selection:bg-[#00ff41]/30 prose prose-invert max-w-none prose-headings:text-[#00ff41] prose-headings:font-mono-data prose-headings:font-bold prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-pre:bg-[#05080c] prose-pre:border prose-pre:border-[#3b4b37] prose-pre:rounded-lg prose-pre:p-3 prose-code:text-[#00e5ff] prose-code:font-mono-data prose-strong:text-white prose-ul:my-2 prose-li:my-0.5">
+                  <div className="text-xs md:text-sm text-[#dfe2eb] leading-relaxed selection:bg-[#00ff41]/30 prose prose-invert max-w-none break-words prose-headings:text-[#00ff41] prose-headings:font-mono-data prose-headings:font-bold prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-pre:bg-[#05080c] prose-pre:border prose-pre:border-[#3b4b37] prose-pre:rounded-lg prose-pre:p-3 prose-code:text-[#00e5ff] prose-code:font-mono-data prose-strong:text-white prose-ul:my-2 prose-li:my-0.5">
                     <Markdown>{liveResponseText || latestDecision?.responseSnippet || ''}</Markdown>
                   </div>
                 )}
@@ -511,7 +536,7 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-[#090d13]/70 border border-[#3b4b37]/50 rounded-xl p-5 flex flex-col justify-between flex-grow shadow-[inset_0_0_20px_rgba(0,0,0,0.4)]"
+              className="bg-[#090d13]/70 border border-[#3b4b37]/50 rounded-xl p-5 flex flex-col justify-between flex-grow min-w-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.4)]"
             >
               <div>
                 <div className="flex items-center justify-between mb-3 border-b border-[#3b4b37]/40 pb-2.5">
@@ -578,6 +603,132 @@ export const ManualQueryPlayground: React.FC<ManualQueryPlaygroundProps> = ({
           )}
         </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {isTraceOpen && latestDecision && (
+          <motion.div
+            className="fixed inset-0 z-[70] flex justify-end bg-black/55 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Request trace"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setIsTraceOpen(false);
+            }}
+          >
+            <motion.aside
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+              className="w-full max-w-xl h-full overflow-y-auto bg-[#090e15] border-l border-[#00e5ff]/30 shadow-[-20px_0_60px_rgba(0,0,0,0.45)]"
+            >
+              <div className="sticky top-0 z-10 flex items-center justify-between gap-3 p-4 bg-[#101720]/95 backdrop-blur border-b border-[#3b4b37]/60">
+                <div>
+                  <div className="flex items-center gap-2 text-[#00e5ff]">
+                    <GitBranch className="w-4 h-4" />
+                    <h2 className="font-display text-base font-bold text-white">Request trace</h2>
+                  </div>
+                  <p className="mt-1 text-[10px] font-mono-data text-[#869683]">
+                    {latestDecision.id} • {latestDecision.timestamp}
+                  </p>
+                </div>
+                <button type="button" onClick={() => setIsTraceOpen(false)} aria-label="Close request trace" className="rounded-lg p-2 text-[#869683] hover:bg-white/10 hover:text-white">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="p-4 space-y-4">
+                <div className="rounded-xl border border-[#3b4b37]/50 bg-[#0d141d] p-3">
+                  <div className="text-[10px] font-mono-data font-bold text-[#869683] uppercase">Prompt</div>
+                  <p className="mt-1 text-xs text-white leading-relaxed break-words">{latestDecision.prompt}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-[10px] font-mono-data">
+                  <div className="rounded-lg border border-[#abc7ff]/30 bg-[#abc7ff]/[0.06] p-3">
+                    <span className="text-[#869683] block">CLASSIFICATION</span>
+                    <strong className="text-[#abc7ff]">{latestDecision.complexity}</strong>
+                    <span className="block text-[#b9ccb2] mt-1">Score {(latestDecision.complexityScore * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="rounded-lg border border-[#00e5ff]/30 bg-[#00e5ff]/[0.06] p-3">
+                    <span className="text-[#869683] block">CONFIDENCE</span>
+                    <strong className="text-[#00e5ff]">{(latestDecision.vectorSimilarity * 100).toFixed(1)}%</strong>
+                    <span className="block text-[#b9ccb2] mt-1">{latestDecision.knnNearestCluster}</span>
+                  </div>
+                  <div className="rounded-lg border border-[#ffba20]/30 bg-[#ffba20]/[0.06] p-3">
+                    <span className="text-[#869683] block">QUALITY THRESHOLD</span>
+                    <strong className="text-[#ffda72]">{routerConfig.minQualityThreshold}/100</strong>
+                    <span className={`block mt-1 ${latestDecision.routedModel.qualityScore >= routerConfig.minQualityThreshold ? 'text-[#00ff41]' : 'text-[#ffb4ab]'}`}>
+                      {latestDecision.routedModel.qualityScore >= routerConfig.minQualityThreshold ? 'Passed' : 'Below threshold'}
+                    </span>
+                  </div>
+                  <div className="rounded-lg border border-[#00ff41]/30 bg-[#00ff41]/[0.06] p-3">
+                    <span className="text-[#869683] block">ROUTE STATUS</span>
+                    <strong className="text-[#00ff41]">{latestDecision.status}</strong>
+                    <span className="block text-[#b9ccb2] mt-1">{latestDecision.routerEngine || 'TrimToken router'}</span>
+                  </div>
+                </div>
+
+                <section className="rounded-xl border border-[#3b4b37]/50 bg-[#0d141d] p-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-[10px] font-mono-data font-bold text-white uppercase">Candidate models</h3>
+                    <span className="text-[10px] text-[#869683]">{traceCandidates.length} considered</span>
+                  </div>
+                  <div className="space-y-2">
+                    {traceCandidates.map((model) => {
+                      const selected = model.id === latestDecision.routedModel.id;
+                      return (
+                        <div key={model.id} className={`flex items-center justify-between gap-3 rounded-lg border p-2 ${selected ? 'border-[#00ff41]/60 bg-[#00ff41]/[0.08]' : 'border-[#3b4b37]/40 bg-[#090e15]'}`}>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: model.color }} />
+                            <span className="text-xs text-white truncate">{model.name}</span>
+                            {selected && <span className="text-[9px] text-[#00ff41] font-mono-data">SELECTED</span>}
+                          </div>
+                          <span className="text-[10px] font-mono-data text-[#b9ccb2] shrink-0">{model.qualityScore}/100</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono-data">
+                  <div className="rounded-lg bg-[#0d141d] border border-[#3b4b37]/50 p-2"><span className="text-[#869683] block">TOKENS</span><strong className="text-white">{latestDecision.inputTokens} / {latestDecision.outputTokens}</strong></div>
+                  <div className="rounded-lg bg-[#0d141d] border border-[#3b4b37]/50 p-2"><span className="text-[#869683] block">LATENCY</span><strong className="text-[#00e5ff]">{latestDecision.latencyMs}ms</strong></div>
+                  <div className="rounded-lg bg-[#0d141d] border border-[#3b4b37]/50 p-2"><span className="text-[#869683] block">COST</span><strong className="text-[#ffda72]">${latestDecision.realizedCost.toFixed(5)}</strong></div>
+                  <div className="rounded-lg bg-[#0d141d] border border-[#3b4b37]/50 p-2"><span className="text-[#869683] block">SAVED</span><strong className="text-[#00ff41]">{latestDecision.savingsPercentage.toFixed(1)}%</strong></div>
+                </div>
+
+                <div className="rounded-xl border border-[#3b4b37]/50 bg-[#0d141d] p-3">
+                  <h3 className="text-[10px] font-mono-data font-bold text-white uppercase mb-2">Retry / fallback path</h3>
+                  <div className="flex items-center gap-2 text-xs font-mono-data">
+                    <span className="rounded bg-[#1b2633] px-2 py-1 text-[#b9ccb2]">Router</span>
+                    <ArrowRight className="w-3 h-3 text-[#869683]" />
+                    <span className="rounded bg-[#00ff41]/10 border border-[#00ff41]/30 px-2 py-1 text-[#72ff70]">{latestDecision.routedModel.name}</span>
+                    {latestDecision.status === 'FALLBACK' && (
+                      <>
+                        <ArrowRight className="w-3 h-3 text-[#ffba20]" />
+                        <span className="rounded bg-[#ffba20]/10 border border-[#ffba20]/30 px-2 py-1 text-[#ffda72]">Fallback response</span>
+                      </>
+                    )}
+                  </div>
+                  <p className="mt-2 text-[10px] text-[#869683]">
+                    {latestDecision.status === 'FALLBACK' ? 'The preferred provider was unavailable; the gateway returned a fallback response.' : 'No retry or fallback was required for this request.'}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-[#3b4b37]/50 bg-[#0d141d] p-3">
+                  <h3 className="text-[10px] font-mono-data font-bold text-white uppercase mb-2">Final answer</h3>
+                  <p className="text-xs text-[#dfe2eb] leading-relaxed max-h-40 overflow-y-auto whitespace-pre-wrap">
+                    {latestDecision.fullResponse || latestDecision.responseSnippet || 'No answer recorded.'}
+                  </p>
+                </div>
+              </div>
+            </motion.aside>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
