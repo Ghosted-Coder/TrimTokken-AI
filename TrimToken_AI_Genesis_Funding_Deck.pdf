@@ -1,0 +1,1172 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R] /Count 8 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 978 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 9 Tf
+11.25 TL
+38 392 Td
+(GENESIS PROGRAM ? FUNDING DECK) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 31 Tf
+34 TL
+38 300 Td
+(Make every) Tj
+T*
+(AI token count.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 14 Tf
+18 TL
+38 218 Td
+(TrimToken AI is the intelligent gateway that routes each) Tj
+T*
+(request to the best-fit model for quality, latency, and) Tj
+T*
+(cost.) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 13 Tf
+17 TL
+38 112 Td
+(A practical response to one question:) Tj
+T*
+(Why pay frontier-model prices for every prompt?) Tj
+ET
+0.263 0.851 1.000 rg 540 280 62 62 re f
+0.043 0.067 0.094 rg
+BT
+/F2 7 Tf
+8.75 TL
+549 307 Td
+(PROMPT) Tj
+ET
+0.259 0.961 0.710 rg 650 195 62 62 re f
+0.043 0.067 0.094 rg
+BT
+/F2 7 Tf
+8.75 TL
+659 222 Td
+(ROUTE) Tj
+ET
+1.000 0.784 0.341 rg 540 110 62 62 re f
+0.043 0.067 0.094 rg
+BT
+/F2 7 Tf
+8.75 TL
+549 137 Td
+(SAVE) Tj
+ET
+0.263 0.851 1.000 RG 2 w 590 280 m 650 238 l S
+0.259 0.961 0.710 RG 2 w 650 195 m 590 150 l S
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 2013 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(01 ? WHY NOW) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(The AI cost problem is becoming a systems problem.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(02 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.075 0.118 0.157 rg 38 90 330 220 re f
+0.075 0.118 0.157 RG 1 w 38 90 330 220 re S
+0.949 0.969 0.961 rg
+BT
+/F2 18 Tf
+23 TL
+58 270 Td
+(Teams are adding AI faster) Tj
+T*
+(than they can control spend.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+58 205 Td
+(01) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 10 Tf
+12.5 TL
+92 205 Td
+(One-size-fits-all model selection) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+92 190 Td
+(Simple requests are often sent to) Tj
+T*
+(expensive frontier models.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+58 152 Td
+(02) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 10 Tf
+12.5 TL
+92 152 Td
+(Prices and capabilities keep moving) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+92 137 Td
+(Provider pricing, latency, and quality) Tj
+T*
+(change constantly.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+58 99 Td
+(03) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 10 Tf
+12.5 TL
+92 99 Td
+(Developers need a drop-in path) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+92 84 Td
+(Cost optimization cannot require rewriting) Tj
+T*
+(every AI product.) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 8 Tf
+10.0 TL
+420 290 Td
+(OUR INSIGHT) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 18 Tf
+23 TL
+420 250 Td
+(The best model is not always) Tj
+T*
+(the biggest model.) Tj
+T*
+(It is the model that meets the) Tj
+T*
+(task?s quality bar at the) Tj
+T*
+(lowest total cost.) Tj
+ET
+0.125 0.192 0.227 rg 420 90 315 70 re f
+0.263 0.851 1.000 RG 1 w 420 90 315 70 re S
+0.263 0.851 1.000 rg
+BT
+/F2 12 Tf
+16 TL
+440 128 Td
+(TrimToken turns model choice into an) Tj
+T*
+(always-on optimization layer.) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 1966 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(02 ? THE PRODUCT) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(TrimToken AI: an intelligent control plane for LLM) Tj
+T*
+(traffic.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(03 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 14 Tf
+17.5 TL
+38 325 Td
+(A gateway that classifies each query, compares live model economics, and) Tj
+T*
+(dispatches to the best-fit provider.) Tj
+ET
+0.075 0.118 0.157 rg 38 120 205 145 re f
+0.263 0.851 1.000 RG 1 w 38 120 205 145 re S
+0.263 0.851 1.000 rg
+BT
+/F2 22 Tf
+27.5 TL
+56 232 Td
+(?) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 12 Tf
+15.0 TL
+56 192 Td
+(Query intelligence) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+56 160 Td
+(Fine-tuned Qwen routing) Tj
+T*
+(classifier) Tj
+T*
+(scores complexity in) Tj
+T*
+(sub-millisecond time.) Tj
+ET
+0.075 0.118 0.157 rg 276 120 205 145 re f
+1.000 0.784 0.341 RG 1 w 276 120 205 145 re S
+1.000 0.784 0.341 rg
+BT
+/F2 22 Tf
+27.5 TL
+294 232 Td
+(?) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 12 Tf
+15.0 TL
+294 192 Td
+(Price-aware routing) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+294 160 Td
+(Pareto utility balances) Tj
+T*
+(quality,) Tj
+T*
+(latency, and cost in real) Tj
+T*
+(time.) Tj
+ET
+0.075 0.118 0.157 rg 514 120 205 145 re f
+0.259 0.961 0.710 RG 1 w 514 120 205 145 re S
+0.259 0.961 0.710 rg
+BT
+/F2 22 Tf
+27.5 TL
+532 232 Td
+(?) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 12 Tf
+15.0 TL
+532 192 Td
+(Production resilience) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+532 160 Td
+(OpenAI-compatible API,) Tj
+T*
+(failover mesh,) Tj
+T*
+(and observability built) Tj
+T*
+(in.) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 12 Tf
+15.0 TL
+38 75 Td
+(Designed for enterprise AI teams that need lower spend without sacrificing the user) Tj
+T*
+(experience.) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 2424 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(03 ? HOW IT WORKS) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(From prompt to outcome in four routing decisions.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(04 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.263 0.851 1.000 rg 55 300 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+68 313 Td
+(1) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 13 Tf
+16.25 TL
+112 323 Td
+(Ingest) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8.5 Tf
+10.625 TL
+112 305 Td
+(Standard OpenAI-compatible request enters the) Tj
+T*
+(gateway.) Tj
+ET
+0.075 0.118 0.157 RG 3 w 74 300 m 74 278 l S
+0.694 0.549 1.000 rg 55 235 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+68 248 Td
+(2) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 13 Tf
+16.25 TL
+112 258 Td
+(Classify) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8.5 Tf
+10.625 TL
+112 240 Td
+(Query is labeled by complexity and task type.) Tj
+ET
+0.075 0.118 0.157 RG 3 w 74 235 m 74 213 l S
+1.000 0.784 0.341 rg 55 170 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+68 183 Td
+(3) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 13 Tf
+16.25 TL
+112 193 Td
+(Optimize) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8.5 Tf
+10.625 TL
+112 175 Td
+(Live pricing and policy constraints rank) Tj
+T*
+(candidates.) Tj
+ET
+0.075 0.118 0.157 RG 3 w 74 170 m 74 148 l S
+0.259 0.961 0.710 rg 55 105 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+68 118 Td
+(4) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 13 Tf
+16.25 TL
+112 128 Td
+(Execute) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8.5 Tf
+10.625 TL
+112 110 Td
+(Best-fit model responds; failover protects) Tj
+T*
+(reliability.) Tj
+ET
+0.075 0.118 0.157 rg 420 105 315 205 re f
+0.075 0.118 0.157 RG 1 w 420 105 315 205 re S
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+442 275 Td
+(ROUTING POLICY EXAMPLE) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 17 Tf
+21 TL
+442 235 Td
+(If a request is simple,) Tj
+T*
+(choose the lowest-cost model) Tj
+T*
+(that clears the quality) Tj
+T*
+(threshold.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+11.25 TL
+442 165 Td
+(Deep reasoning and code move up the model) Tj
+T*
+(spectrum only when needed.) Tj
+ET
+0.125 0.192 0.227 rg 442 122 270 25 re f
+0.263 0.851 1.000 RG 1 w 442 122 270 25 re S
+0.263 0.851 1.000 rg
+BT
+/F2 8 Tf
+10.0 TL
+480 130 Td
+(QUALITY BAR + COST CEILING) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 1712 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(04 ? CUSTOMER VALUE) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(Why customers pay: measurable savings, not another) Tj
+T*
+(model.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(05 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 14 Tf
+17.5 TL
+38 325 Td
+(TrimToken sits between the application and model providers, creating a) Tj
+T*
+(measurable cost and reliability layer.) Tj
+ET
+0.075 0.118 0.157 rg 38 178 205 105 re f
+0.259 0.961 0.710 RG 1 w 38 178 205 105 re S
+0.259 0.961 0.710 rg
+BT
+/F2 22 Tf
+27.5 TL
+54 232 Td
+(UP TO 70%) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F1 9 Tf
+11.25 TL
+54 200 Td
+(targeted reduction in) Tj
+T*
+(enterprise LLM API overhead) Tj
+ET
+0.075 0.118 0.157 rg 276 178 205 105 re f
+0.263 0.851 1.000 RG 1 w 276 178 205 105 re S
+0.263 0.851 1.000 rg
+BT
+/F2 22 Tf
+27.5 TL
+292 232 Td
+(< 1.2 ms) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F1 9 Tf
+11.25 TL
+292 200 Td
+(routing-classifier latency) Tj
+T*
+(target) Tj
+ET
+0.075 0.118 0.157 rg 514 178 205 105 re f
+1.000 0.784 0.341 RG 1 w 514 178 205 105 re S
+1.000 0.784 0.341 rg
+BT
+/F2 22 Tf
+27.5 TL
+530 232 Td
+(1-line swap) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F1 9 Tf
+11.25 TL
+530 200 Td
+(OpenAI-compatible gateway) Tj
+T*
+(integration) Tj
+ET
+0.094 0.153 0.176 rg 38 95 681 48 re f
+0.075 0.118 0.157 RG 1 w 38 95 681 48 re S
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+58 113 Td
+(The economic moat is the routing data: every query improves policy, benchmarks, and model) Tj
+T*
+(economics.) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 1934 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(05 ? HOW WE MAKE MONEY) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(A recurring SaaS model aligned with customer savings.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(06 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.075 0.118 0.157 rg 38 130 205 165 re f
+0.263 0.851 1.000 RG 1 w 38 130 205 165 re S
+0.263 0.851 1.000 rg
+BT
+/F2 14 Tf
+17.5 TL
+56 260 Td
+(Gateway) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 9 Tf
+11.25 TL
+56 230 Td
+(Usage-based) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+56 195 Td
+(Per-request fee or) Tj
+T*
+(percentage of savings) Tj
+T*
+(for teams getting started.) Tj
+ET
+0.075 0.118 0.157 rg 276 130 205 165 re f
+0.259 0.961 0.710 RG 1 w 276 130 205 165 re S
+0.259 0.961 0.710 rg
+BT
+/F2 14 Tf
+17.5 TL
+294 260 Td
+(Scale) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 9 Tf
+11.25 TL
+294 230 Td
+(Platform subscription) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+294 195 Td
+(Monthly plan for policies,) Tj
+T*
+(analytics,) Tj
+T*
+(budgets, and team) Tj
+T*
+(controls.) Tj
+ET
+0.075 0.118 0.157 rg 514 130 205 165 re f
+1.000 0.784 0.341 RG 1 w 514 130 205 165 re S
+1.000 0.784 0.341 rg
+BT
+/F2 14 Tf
+17.5 TL
+532 260 Td
+(Enterprise) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 9 Tf
+11.25 TL
+532 230 Td
+(Annual contract) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+532 195 Td
+(Private deployment, SLAs,) Tj
+T*
+(custom policies,) Tj
+T*
+(security reviews, and) Tj
+T*
+(support.) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 12 Tf
+15.0 TL
+38 78 Td
+(The more traffic a customer routes, the more value we create ? and the more) Tj
+T*
+(recurring revenue we earn.) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 55 Td
+(Expansion: observability ? governance ? private routing models ? multi-cloud optimization) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 2111 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(06 ? THE FUNDING CASE) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(Genesis can help us turn a working prototype into a) Tj
+T*
+(category platform.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(07 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 15 Tf
+19 TL
+38 320 Td
+(We are seeking Genesis support to validate the product) Tj
+T*
+(with design partners and build the data moat around) Tj
+T*
+(cost-aware routing.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 13 Tf
+16.25 TL
+38 240 Td
+(40%) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+95 240 Td
+(Pilot deployments) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+95 224 Td
+(Design partners and production) Tj
+T*
+(integrations.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 13 Tf
+16.25 TL
+38 192 Td
+(30%) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+95 192 Td
+(Routing intelligence) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+95 176 Td
+(Benchmarks, policies, and) Tj
+T*
+(fine-tuned models.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 13 Tf
+16.25 TL
+38 144 Td
+(20%) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+95 144 Td
+(Reliability + security) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+95 128 Td
+(Observability, failover, and) Tj
+T*
+(enterprise controls.) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 13 Tf
+16.25 TL
+38 96 Td
+(10%) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+95 96 Td
+(GTM) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 8 Tf
+10.0 TL
+95 80 Td
+(ROI tooling, case studies, and) Tj
+T*
+(onboarding.) Tj
+ET
+0.075 0.118 0.157 rg 455 105 260 190 re f
+0.259 0.961 0.710 RG 1 w 455 105 260 190 re S
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+485 260 Td
+(THE MILESTONE) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 20 Tf
+26 TL
+485 217 Td
+(Prove repeatable) Tj
+T*
+(savings in production.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+485 155 Td
+(A focused path from prototype to) Tj
+T*
+(paid, measurable deployments.) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 2146 >>
+stream
+0.043 0.067 0.094 rg 0 0 792 445 re f
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 407 Td
+(07 ? ROADMAP) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 25 Tf
+31.25 TL
+38 370 Td
+(The future: a routing intelligence layer for every AI) Tj
+T*
+(stack.) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F2 8 Tf
+10.0 TL
+715 407 Td
+(08 / 08) Tj
+ET
+0.075 0.118 0.157 RG 1 w 38 34 m 754 34 l S
+0.663 0.733 0.753 rg
+BT
+/F1 6.5 Tf
+8.125 TL
+38 18 Td
+(TRIMTOKEN AI ? COST-AWARE INTELLIGENCE FOR THE MULTI-MODEL ERA) Tj
+ET
+0.259 0.961 0.710 rg 38 258 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+51 270 Td
+(1) Tj
+ET
+0.259 0.961 0.710 rg
+BT
+/F2 8 Tf
+10.0 TL
+38 230 Td
+(NOW) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 14 Tf
+17.5 TL
+38 197 Td
+(Gateway MVP) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+38 155 Td
+(Multi-provider routing,) Tj
+T*
+(live pricing, API) Tj
+T*
+(compatibility,) Tj
+T*
+(observability.) Tj
+ET
+0.075 0.118 0.157 RG 3 w 80 277 m 243 277 l S
+0.263 0.851 1.000 rg 276 258 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+289 270 Td
+(2) Tj
+ET
+0.263 0.851 1.000 rg
+BT
+/F2 8 Tf
+10.0 TL
+276 230 Td
+(NEXT) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 14 Tf
+17.5 TL
+276 197 Td
+(Production pilots) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+276 155 Td
+(Design partners, savings) Tj
+T*
+(benchmarks, policy) Tj
+T*
+(controls, enterprise) Tj
+T*
+(hardening.) Tj
+ET
+0.075 0.118 0.157 RG 3 w 318 277 m 481 277 l S
+1.000 0.784 0.341 rg 514 258 38 38 re f
+0.043 0.067 0.094 rg
+BT
+/F2 14 Tf
+17.5 TL
+527 270 Td
+(3) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 8 Tf
+10.0 TL
+514 230 Td
+(LATER) Tj
+ET
+0.949 0.969 0.961 rg
+BT
+/F2 14 Tf
+17.5 TL
+514 197 Td
+(Randomized trees) Tj
+ET
+0.663 0.733 0.753 rg
+BT
+/F1 9 Tf
+12 TL
+514 155 Td
+(Research randomized-tree) Tj
+T*
+(routing for faster, more) Tj
+T*
+(explainable model selection) Tj
+T*
+(at scale.) Tj
+ET
+0.086 0.208 0.165 rg 38 85 681 44 re f
+0.259 0.961 0.710 RG 1 w 38 85 681 44 re S
+0.949 0.969 0.961 rg
+BT
+/F2 11 Tf
+13.75 TL
+58 101 Td
+(Our ambition: make cost-aware routing the default layer behind every serious AI) Tj
+T*
+(application.) Tj
+ET
+1.000 0.784 0.341 rg
+BT
+/F2 9 Tf
+11.25 TL
+38 62 Td
+(Thank you ? TrimToken AI ? Let?s make AI economics sustainable.) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 445] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 19 0 R >>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000169 00000 n 
+0000000239 00000 n 
+0000000314 00000 n 
+0000001343 00000 n 
+0000001479 00000 n 
+0000003544 00000 n 
+0000003680 00000 n 
+0000005698 00000 n 
+0000005835 00000 n 
+0000008312 00000 n 
+0000008450 00000 n 
+0000010215 00000 n 
+0000010353 00000 n 
+0000012340 00000 n 
+0000012478 00000 n 
+0000014642 00000 n 
+0000014780 00000 n 
+0000016979 00000 n 
+trailer
+<< /Size 21 /Root 1 0 R >>
+startxref
+17117
+%%EOF

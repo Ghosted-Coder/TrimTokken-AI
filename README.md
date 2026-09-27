@@ -16,7 +16,7 @@ npm install
 
 2. **Full Multi-Domain AI Knowledge Synthesizer**:
    - Delivers in-depth, step-by-step mathematical proofs, working code implementations (Rust, Python, TypeScript, etc.), legal/financial contract analysis, and scientific explanations.
-   - Live Gemini execution powered by `@google/genai` with fallback synthesis for guaranteed zero-downtime reliability.
+   - Local deterministic synthesis with no third-party API calls or credentials.
 
 3. **Enterprise Financial ROI Modeling**:
    - Real-time cost delta calculations against naive frontier model baselines (e.g. GPT-4o).
@@ -32,7 +32,7 @@ npm install
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS v4, Motion (Animations), Lucide React, React Markdown.
 - **Backend API**: Express v4 full-stack server (`server.ts`) with native Vite middleware and CommonJS bundled distribution (`dist/server.cjs`).
-- **AI Engine**: Google GenAI SDK (`@google/genai`) with prioritized multi-model failover (`gemini-3.7-flash`, `gemini-3.1-flash-lite`, `gemini-flash-latest`, `gemini-3.1-pro-preview`).
+- **AI Engine**: Local deterministic synthesis and optional local routing service; no provider API keys are loaded.
 - **API Standard**: OpenAI-compatible `/v1/chat/completions` proxy endpoint.
 
 ---

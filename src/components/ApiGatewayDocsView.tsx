@@ -58,19 +58,16 @@ async function main() {
 
 main();`;
 
-  const qwenSnippet = `import os
-import requests
+  const qwenSnippet = `import requests
 
-# Route a request through TrimToken's OpenAI-compatible gateway
+# Route a request through TrimToken's local-only OpenAI-compatible gateway
 url = "https://api.trimtoken.ai/v1/chat/completions"
 headers = {
     "Authorization": "Bearer tt-live-token",
     "Content-Type": "application/json",
-    # Optional: pass your Alibaba DashScope key for zero-latency direct passthrough
-    "X-Qwen-DashScope-Key": os.getenv("QWEN_API_KEY", "")
 }
 payload = {
-    "model": "qwen-2.5-72b", # or "qwen-2.5-coder-32b"
+    "model": "local-synthesizer",
     "messages": [
         {"role": "user", "content": "Explain quantum entanglement in simple terms."}
     ]
