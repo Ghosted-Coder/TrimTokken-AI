@@ -31,8 +31,8 @@ import { TrimTokenLogo } from './TrimTokenLogo';
 import { UserAccount } from '../types';
 
 interface TopNavBarProps {
-  activeTab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs';
-  setActiveTab: (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs') => void;
+  activeTab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log';
+  setActiveTab: (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log') => void;
   isSimulating: boolean;
   setIsSimulating: React.Dispatch<React.SetStateAction<boolean>>;
   onResetStats: () => void;
@@ -134,7 +134,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleNavClick = (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs', sectionId?: string) => {
+  const handleNavClick = (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log', sectionId?: string) => {
     setActiveTab(tab);
     if (sectionId && onScrollToSection) {
       setTimeout(() => onScrollToSection(sectionId), 50);
@@ -279,6 +279,16 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
               </button>
             </>
           )}
+          <button
+            onClick={() => handleNavClick('routing-log')}
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-mono-data tracking-wider transition-all ${
+              activeTab === 'routing-log'
+                ? 'text-[#00e5ff] bg-[#00e5ff]/10 border border-[#00e5ff]/30 font-semibold'
+                : 'text-[#b9ccb2] hover:text-[#00e5ff] hover:bg-[#353940]/30'
+            }`}
+          >
+            ROUTING LOG
+          </button>
         </nav>
 
         {/* Right Tools Controls */}
@@ -660,6 +670,14 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
             }`}
           >
             GATEWAY_DOCS
+          </button>
+          <button
+            onClick={() => handleNavClick('routing-log')}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-mono-data whitespace-nowrap ${
+              activeTab === 'routing-log' ? 'text-[#00e5ff] bg-[#00e5ff]/10 font-bold' : 'text-[#b9ccb2]'
+            }`}
+          >
+            ROUTING_LOG
           </button>
         </div>
       )}

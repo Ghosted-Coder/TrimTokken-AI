@@ -3,6 +3,7 @@ import Markdown from 'react-markdown';
 import { Router, Check, ChevronDown, ChevronUp, Filter, Search, Sparkles, Trash2, HelpCircle, ArrowRight, CornerDownRight, Zap, Loader2 } from 'lucide-react';
 import { RoutingDecision, QueryComplexity, ModelPricing, RouterConfig } from '../types';
 import { routeQuery } from '../lib/routerEngine';
+import { RoutingStats } from './ui/routing-stats';
 
 interface LiveRoutingStreamProps {
   queries: RoutingDecision[];
@@ -13,6 +14,8 @@ interface LiveRoutingStreamProps {
   models?: ModelPricing[];
   routerConfig?: RouterConfig;
 }
+
+type SortColumn = 'timestamp' | 'prompt' | 'complexity' | 'model' | 'tier' | 'tokens' | 'cost' | 'savings' | 'latency';
 
 export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
   queries,
@@ -27,6 +30,8 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
   const [selectedSourceFilter, setSelectedSourceFilter] = useState<'ALL' | 'USER' | 'BENCHMARK'>('ALL');
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [presetExecuting, setPresetExecuting] = useState(false);
+  const [sortColumn, setSortColumn] = useState<SortColumn>('timestamp');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   // Filter queries based on search term, complexity, and source (User vs Benchmark)
   const filteredQueries = queries.filter((q) => {
@@ -47,9 +52,68 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
     return matchesSearch && matchesComplexity && matchesSource;
   });
 
+  const sortedQueries = [...filteredQueries].sort((a, b) => {
+    const values: Record<SortColumn, [string | number, string | number]> = {
+      timestamp: [Date.parse(a.timestamp) || a.timestamp, Date.parse(b.timestamp) || b.timestamp],
+      prompt: [a.prompt.toLowerCase(), b.prompt.toLowerCase()],
+      complexity: [a.complexity, b.complexity],
+      model: [a.routedModel.name.toLowerCase(), b.routedModel.name.toLowerCase()],
+      tier: [
+        ['ULTRA_CHEAP', 'EDGE', 'MID', 'FRONTIER'].indexOf(a.routedModel.tier),
+        ['ULTRA_CHEAP', 'EDGE', 'MID', 'FRONTIER'].indexOf(b.routedModel.tier),
+      ],
+      tokens: [a.inputTokens + a.outputTokens, b.inputTokens + b.outputTokens],
+      cost: [a.realizedCost, b.realizedCost],
+      savings: [a.savingsPercentage, b.savingsPercentage],
+      latency: [a.latencyMs, b.latencyMs],
+    };
+    const [left, right] = values[sortColumn];
+    const comparison = typeof left === 'number' && typeof right === 'number'
+      ? left - right
+      : String(left).localeCompare(String(right));
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(direction => direction === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection(column === 'timestamp' ? 'desc' : 'asc');
+    }
+  };
+
+  const renderSortHeader = (label: string, column: SortColumn, className = '') => (
+    <th
+      aria-sort={sortColumn === column ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}
+      className={`px-4 py-3 ${className}`}
+    >
+      <button
+        type="button"
+        onClick={() => handleSort(column)}
+        className="inline-flex items-center gap-1 hover:text-white focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#00ff41]"
+      >
+        {label}
+        {sortColumn === column && (
+          sortDirection === 'asc'
+            ? <ChevronUp className="h-3 w-3" aria-hidden="true" />
+            : <ChevronDown className="h-3 w-3" aria-hidden="true" />
+        )}
+      </button>
+    </th>
+  );
+
   const userQueryCount = queries.filter((q) => q.source === 'USER').length;
   const benchmarkQueryCount = queries.filter((q) => q.source !== 'USER').length;
   const hasActiveFilters = Boolean(searchTerm) || selectedComplexityFilter !== 'ALL' || selectedSourceFilter !== 'ALL';
+  const totalCost = queries.reduce((sum, query) => sum + query.realizedCost, 0);
+  const naiveCost = queries.reduce((sum, query) => sum + query.naiveCost, 0);
+  const avgLatencyMs = queries.length
+    ? queries.reduce((sum, query) => sum + query.latencyMs, 0) / queries.length
+    : 0;
+  const premiumPct = queries.length
+    ? (queries.filter((query) => query.routedModel.tier === 'FRONTIER').length / queries.length) * 100
+    : 0;
 
   const clearFilters = () => {
     setSelectedComplexityFilter('ALL');
@@ -138,6 +202,14 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      <RoutingStats
+        totalRequests={queries.length}
+        totalCost={totalCost}
+        naiveCost={naiveCost}
+        avgLatencyMs={avgLatencyMs}
+        premiumPct={premiumPct}
+      />
+
       {/* Header Bar */}
       <div className="p-4 border-b border-[#3b4b37]/50 flex flex-wrap justify-between items-center bg-[#181c22]/60 gap-3">
         <div className="flex flex-wrap items-center gap-3">
@@ -255,7 +327,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
         ) : (
           <>
           <div className="md:hidden space-y-2 p-3">
-            {filteredQueries.map((q) => {
+            {sortedQueries.map((q) => {
               const isExpanded = expandedRowId === q.id;
               const isUser = q.source === 'USER';
               return (
@@ -299,19 +371,22 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               );
             })}
           </div>
-          <table className="hidden md:table w-full text-left font-mono-data text-xs whitespace-nowrap">
+          <table className="hidden md:table w-full table-fixed text-left font-mono-data text-xs">
             <thead className="text-[11px] text-[#b9ccb2] bg-[#10141a]/90 sticky top-0 z-10 border-b border-[#3b4b37]/60 backdrop-blur-md">
               <tr>
-                <th className="px-4 py-3">ORIGIN / TIME</th>
-                <th className="px-4 py-3 w-2/5">PROMPT / QUESTION</th>
-                <th className="px-4 py-3">COMPLEXITY</th>
-                <th className="px-4 py-3">ROUTED_TO</th>
-                <th className="px-4 py-3">SAVINGS</th>
-                <th className="px-4 py-3 text-right">STATUS / LATENCY</th>
+                {renderSortHeader('ORIGIN / TIME', 'timestamp')}
+                {renderSortHeader('PROMPT / QUESTION', 'prompt', 'w-2/5')}
+                {renderSortHeader('COMPLEXITY', 'complexity')}
+                {renderSortHeader('ROUTED TO', 'model')}
+                {renderSortHeader('TIER', 'tier')}
+                {renderSortHeader('TOKENS', 'tokens', 'text-right')}
+                {renderSortHeader('COST', 'cost', 'text-right')}
+                {renderSortHeader('SAVINGS', 'savings')}
+                {renderSortHeader('STATUS / LATENCY', 'latency', 'text-right')}
               </tr>
             </thead>
             <tbody className="text-[#dfe2eb] divide-y divide-[#3b4b37]/20">
-              {filteredQueries.map((q) => {
+              {sortedQueries.map((q) => {
                 const isExpanded = expandedRowId === q.id;
                 const isUser = q.source === 'USER';
 
@@ -361,6 +436,15 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                           {q.routedModel.name}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-[10px] text-[#b9ccb2]">
+                        {q.routedModel.tier.replace('_', ' ')}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-[#b9ccb2]">
+                        {(q.inputTokens + q.outputTokens).toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-[#ffba20]">
+                        ${q.realizedCost.toFixed(5)}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="text-[#00ff41] font-semibold text-[11px] bg-[#00ff41]/10 px-1.5 py-0.5 rounded border border-[#00ff41]/20">
                           +{q.savingsPercentage.toFixed(1)}% (${(q.costSaved * 1000).toFixed(2)}m)
@@ -382,7 +466,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                     {/* Expanded Drawer Details */}
                     {isExpanded && (
                       <tr className="bg-[#0a0e14]/90">
-                        <td colSpan={6} className="p-4 border-y border-[#00ff41]/20">
+                        <td colSpan={9} className="p-4 border-y border-[#00ff41]/20">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono-data">
                             {/* Col 1: Routing Justification */}
                             <div className="bg-[#14181f] p-3 rounded border border-[#3b4b37]/40 flex flex-col gap-1.5">

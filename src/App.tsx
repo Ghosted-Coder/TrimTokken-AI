@@ -15,7 +15,6 @@ import { MeteorShower } from './components/MeteorShower';
 
 const ManualQueryPlayground = lazy(() => import('./components/ManualQueryPlayground').then((module) => ({ default: module.ManualQueryPlayground })));
 const LiveRoutingStream = lazy(() => import('./components/LiveRoutingStream').then((module) => ({ default: module.LiveRoutingStream })));
-const LivePricingFeed = lazy(() => import('./components/LivePricingFeed').then((module) => ({ default: module.LivePricingFeed })));
 const RoutingPoliciesView = lazy(() => import('./components/RoutingPoliciesView').then((module) => ({ default: module.RoutingPoliciesView })));
 const AnalyticsView = lazy(() => import('./components/AnalyticsView').then((module) => ({ default: module.AnalyticsView })));
 const PythonCodeView = lazy(() => import('./components/PythonCodeView').then((module) => ({ default: module.PythonCodeView })));
@@ -26,6 +25,7 @@ const RoiCalculator = lazy(() => import('./components/RoiCalculator').then((modu
 const ArchitectureSection = lazy(() => import('./components/ArchitectureSection').then((module) => ({ default: module.ArchitectureSection })));
 const BenchmarkComparison = lazy(() => import('./components/BenchmarkComparison').then((module) => ({ default: module.BenchmarkComparison })));
 const EmployeeActivityDashboard = lazy(() => import('./components/EmployeeActivityDashboard').then((module) => ({ default: module.EmployeeActivityDashboard })));
+const RoutingLogTableDemo = lazy(() => import('./components/RoutingLogTableDemo'));
 
 import { ModelPricing, RouterConfig, RoutingDecision, AggregatedStats, UserAccount } from './types';
 import { INITIAL_MODELS, FRONTIER_BASELINE_ID } from './lib/modelsData';
@@ -96,10 +96,9 @@ export default function App() {
   };
 
   // Navigation & UI state
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log'>('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [isManageProvidersOpen, setIsManageProvidersOpen] = useState(false);
-  const [isGpt4oSlashed, setIsGpt4oSlashed] = useState(false);
   const [showStartupAnimation, setShowStartupAnimation] = useState(() => {
     // Only play once per browser session
     if (typeof window !== 'undefined') {
@@ -265,31 +264,6 @@ export default function App() {
     }
   };
 
-  // Stage demo: simulate 50% price cut on GPT-4o
-  const handleSimulatePriceDrop = () => {
-    if (isGpt4oSlashed) {
-      // Restore
-      setModels((prev) =>
-        prev.map((m) =>
-          m.id === 'gpt-4o'
-            ? { ...m, promptPricePerM: 15.00, completionPricePerM: 60.00 }
-            : m
-        )
-      );
-      setIsGpt4oSlashed(false);
-    } else {
-      // 50% slash
-      setModels((prev) =>
-        prev.map((m) =>
-          m.id === 'gpt-4o'
-            ? { ...m, promptPricePerM: 7.50, completionPricePerM: 30.00 }
-            : m
-        )
-      );
-      setIsGpt4oSlashed(true);
-    }
-  };
-
   const handleResetStats = () => {
     setQueries([]);
     setNaiveCostTotal(0.0);
@@ -357,7 +331,7 @@ export default function App() {
 
   const isAdmin = currentUser?.authRole === 'admin';
   const handleTabChange = (tab: typeof activeTab) => {
-    if (!isAdmin && tab !== 'dashboard') {
+    if (!isAdmin && tab !== 'dashboard' && tab !== 'routing-log') {
       setActiveTab('dashboard');
       return;
     }
@@ -430,10 +404,10 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-6 items-stretch scroll-mt-28 pt-2 sm:pt-4"
+              className="w-full scroll-mt-28 pt-2 sm:pt-4"
             >
-              {/* Main Column (9 cols): Manual Query Input (Employee) or Live Routing Stream (Admin) */}
-              <div className="flex flex-col gap-6 h-full min-w-0 lg:min-h-[760px] lg:pr-4 lg:border-r-2 lg:border-[#00e5ff]/20">
+              {/* Manual Query Input (Employee) or Live Routing Stream (Admin) */}
+              <div className="flex w-full min-w-0 flex-col gap-6 h-full lg:min-h-[760px]">
                 <div className="glass-panel rounded-2xl overflow-hidden flex flex-col h-full flex-grow border border-[#00ff41]/35 shadow-[0_0_30px_rgba(0,0,0,0.45)]">
                   {/* Manual Query Playground (Employee / Standard User Exclusive) */}
                   {!isAdmin && (
@@ -457,18 +431,6 @@ export default function App() {
                       routerConfig={routerConfig}
                     />
                   )}
-                </div>
-              </div>
-
-              {/* Sidebar Column (3 cols): Compact live pricing feed */}
-              <div className="flex flex-col gap-6 h-full min-w-0 lg:-mt-6 lg:w-[280px] lg:pl-4">
-                <div className="rounded-2xl border-2 border-[#ffba20]/25 bg-[#080c12]/35 p-2 shadow-[inset_0_0_24px_rgba(255,186,32,0.04)]">
-                  <LivePricingFeed
-                    models={models}
-                    onOpenManageProviders={() => setIsManageProvidersOpen(true)}
-                    onSimulatePriceDrop={handleSimulatePriceDrop}
-                    isGpt4oSlashed={isGpt4oSlashed}
-                  />
                 </div>
               </div>
             </motion.div>
@@ -571,6 +533,9 @@ export default function App() {
 
         {/* Tab 6: API Gateway & OpenAI Drop-In Docs */}
         {activeTab === 'docs' && <ApiGatewayDocsView />}
+
+        {/* Routing Log Table Demo */}
+        {activeTab === 'routing-log' && <RoutingLogTableDemo queries={queries} />}
       </main>
       </Suspense>
 
@@ -586,7 +551,6 @@ export default function App() {
           onUpdateModels={(updated) => setModels(updated)}
           onResetToDefaults={() => {
             setModels(INITIAL_MODELS);
-            setIsGpt4oSlashed(false);
           }}
         />
       </Suspense>

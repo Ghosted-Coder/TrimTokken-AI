@@ -3,7 +3,7 @@ import { Activity, ArrowUpRight } from 'lucide-react';
 import { TrimTokenLogo } from './TrimTokenLogo';
 
 interface WebsiteFooterProps {
-  onNavigateTab: (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs') => void;
+  onNavigateTab: (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log') => void;
 }
 
 export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) => {
@@ -67,6 +67,14 @@ export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) =
                   className="hover:text-[#00ff41] transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   Cost & Latency Analytics
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigateTab('routing-log')}
+                  className="hover:text-[#00e5ff] transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  Routing Log Table Demo
                 </button>
               </li>
             </ul>
