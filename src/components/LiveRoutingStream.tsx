@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
-import { Router, Check, ChevronDown, ChevronUp, Filter, Search, Sparkles, Trash2, HelpCircle, ArrowRight, CornerDownRight, Zap, Loader2 } from 'lucide-react';
+import { Router, Check, ChevronDown, ChevronUp, Sparkles, Trash2, HelpCircle, ArrowRight, CornerDownRight, Zap, Loader2 } from 'lucide-react';
 import { RoutingDecision, QueryComplexity, ModelPricing, RouterConfig } from '../types';
 import { routeQuery } from '../lib/routerEngine';
 import { RoutingStats } from './ui/routing-stats';
@@ -26,14 +26,12 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
   models,
   routerConfig
 }) => {
-  const [selectedComplexityFilter, setSelectedComplexityFilter] = useState<string>('ALL');
-  const [selectedSourceFilter, setSelectedSourceFilter] = useState<'ALL' | 'USER' | 'BENCHMARK'>('ALL');
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [presetExecuting, setPresetExecuting] = useState(false);
   const [sortColumn, setSortColumn] = useState<SortColumn>('timestamp');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  // Filter queries based on search term, complexity, and source (User vs Benchmark)
+  // Filter queries using the global search field.
   const filteredQueries = queries.filter((q) => {
     const matchesSearch =
       !searchTerm ||
@@ -41,15 +39,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
       q.routedModel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       q.complexity.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesComplexity =
-      selectedComplexityFilter === 'ALL' || q.complexity === selectedComplexityFilter;
-
-    const matchesSource =
-      selectedSourceFilter === 'ALL' ||
-      (selectedSourceFilter === 'USER' && q.source === 'USER') ||
-      (selectedSourceFilter === 'BENCHMARK' && q.source !== 'USER');
-
-    return matchesSearch && matchesComplexity && matchesSource;
+    return matchesSearch;
   });
 
   const sortedQueries = [...filteredQueries].sort((a, b) => {
@@ -103,9 +93,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
     </th>
   );
 
-  const userQueryCount = queries.filter((q) => q.source === 'USER').length;
-  const benchmarkQueryCount = queries.filter((q) => q.source !== 'USER').length;
-  const hasActiveFilters = Boolean(searchTerm) || selectedComplexityFilter !== 'ALL' || selectedSourceFilter !== 'ALL';
+  const hasSearch = Boolean(searchTerm);
   const totalCost = queries.reduce((sum, query) => sum + query.realizedCost, 0);
   const naiveCost = queries.reduce((sum, query) => sum + query.naiveCost, 0);
   const avgLatencyMs = queries.length
@@ -114,11 +102,6 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
   const premiumPct = queries.length
     ? (queries.filter((query) => query.routedModel.tier === 'FRONTIER').length / queries.length) * 100
     : 0;
-
-  const clearFilters = () => {
-    setSelectedComplexityFilter('ALL');
-    setSelectedSourceFilter('ALL');
-  };
 
   const getComplexityBadge = (complexity: QueryComplexity) => {
     switch (complexity) {
@@ -225,66 +208,10 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               <span className="w-2 h-2 rounded-full bg-[#00ff41] animate-pulse"></span>
               {queries.length} TOTAL QUERIES
             </span>
-            {userQueryCount > 0 && (
-              <span className="font-mono-data text-[11px] text-[#72ff70] bg-[#00ff41]/15 px-2 py-0.5 rounded border border-[#00ff41]/30">
-                {userQueryCount} YOURS
-              </span>
-            )}
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Source Filter (All / Yours / Benchmarks) */}
-          <div className="flex items-center gap-1 bg-[#10141a] p-0.5 rounded-lg border border-[#3b4b37]/60 text-xs font-mono-data">
-            <button
-              onClick={() => setSelectedSourceFilter('ALL')}
-              className={`px-2 py-0.5 rounded text-[10px] tracking-wider transition-all cursor-pointer ${
-                selectedSourceFilter === 'ALL'
-                  ? 'bg-[#00ff41] text-[#003907] font-bold'
-                  : 'text-[#b9ccb2] hover:text-white'
-              }`}
-            >
-              ALL
-            </button>
-            <button
-              onClick={() => setSelectedSourceFilter('USER')}
-              className={`px-2 py-0.5 rounded text-[10px] tracking-wider transition-all cursor-pointer ${
-                selectedSourceFilter === 'USER'
-                  ? 'bg-[#00ff41] text-[#003907] font-bold'
-                  : 'text-[#b9ccb2] hover:text-white'
-              }`}
-            >
-              MY QUESTIONS ({userQueryCount})
-            </button>
-            <button
-              onClick={() => setSelectedSourceFilter('BENCHMARK')}
-              className={`px-2 py-0.5 rounded text-[10px] tracking-wider transition-all cursor-pointer ${
-                selectedSourceFilter === 'BENCHMARK'
-                  ? 'bg-[#00e5ff] text-[#003740] font-bold'
-                  : 'text-[#b9ccb2] hover:text-white'
-              }`}
-            >
-              BENCHMARKS ({benchmarkQueryCount})
-            </button>
-          </div>
-
-          {/* Complexity Filter Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto text-xs font-mono-data">
-            {['ALL', 'SIMPLE', 'EXTRACTION', 'REASONING', 'CODE', 'COMPLEX'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedComplexityFilter(cat)}
-                className={`px-2 py-1 rounded text-[10px] tracking-wider transition-all cursor-pointer ${
-                  selectedComplexityFilter === cat
-                    ? 'bg-[#00ff41]/20 text-[#00ff41] border border-[#00ff41]/40 font-bold'
-                    : 'bg-[#1c2026] text-[#b9ccb2] border border-[#3b4b37]/40 hover:text-white'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
           {/* Clear History Button */}
           {queries.length > 0 && onClearQueries && (
             <button
@@ -307,22 +234,13 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="font-mono-data text-sm font-bold text-white mb-1">
-              No matching queries found in current filter
+              No matching queries found
             </h3>
             <p className="font-body text-xs text-[#b9ccb2]/70 max-w-md mb-5 leading-relaxed">
-              {hasActiveFilters
-                ? 'Try clearing the active filters or typing a problem in the Manual Query box above.'
+              {hasSearch
+                ? 'Try clearing the search in the top navigation or entering a different query.'
                 : 'Run a query in the Manual Query box above to start building your routing history.'}
             </p>
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="rounded-lg border border-[#00e5ff]/40 px-3 py-1.5 text-[11px] font-mono-data text-[#00e5ff] hover:bg-[#00e5ff]/10 transition-colors"
-              >
-                Clear filters
-              </button>
-            )}
           </div>
         ) : (
           <>
@@ -371,7 +289,18 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
               );
             })}
           </div>
-          <table className="hidden md:table w-full table-fixed text-left font-mono-data text-xs">
+          <table className="hidden min-w-[1240px] md:table w-full table-fixed text-left font-mono-data text-xs">
+            <colgroup>
+              <col className="w-[150px]" />
+              <col className="w-[30%]" />
+              <col className="w-[118px]" />
+              <col className="w-[150px]" />
+              <col className="w-[92px]" />
+              <col className="w-[86px]" />
+              <col className="w-[100px]" />
+              <col className="w-[125px]" />
+              <col className="w-[125px]" />
+            </colgroup>
             <thead className="text-[11px] text-[#b9ccb2] bg-[#10141a]/90 sticky top-0 z-10 border-b border-[#3b4b37]/60 backdrop-blur-md">
               <tr>
                 {renderSortHeader('ORIGIN / TIME', 'timestamp')}
@@ -408,7 +337,7 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                       }`}
                     >
                       <td className="px-4 py-3 text-[#b9ccb2] text-[11px]">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex flex-col items-start gap-1">
                           {isUser ? (
                             <span className="bg-[#00ff41]/20 text-[#00ff41] border border-[#00ff41]/40 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider">
                               YOU
@@ -418,11 +347,13 @@ export const LiveRoutingStream: React.FC<LiveRoutingStreamProps> = ({
                               BENCHMARK
                             </span>
                           )}
-                          <span>{q.timestamp}</span>
+                          <span className="whitespace-nowrap text-[10px] text-[#869683]">{q.timestamp}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 truncate max-w-xs text-[#dfe2eb]/90 font-medium">
-                        "{q.prompt}"
+                      <td className="px-4 py-3 text-[#dfe2eb]/90 font-medium">
+                        <span className="block truncate" title={q.prompt}>
+                          "{q.prompt}"
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         {getComplexityBadge(q.complexity)}

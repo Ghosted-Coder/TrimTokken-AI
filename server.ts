@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
+import type { ViteDevServer } from 'vite';
 import { generateComprehensiveAnswer } from './src/lib/knowledgeSynthesizer';
 import { classifyQueryComplexity } from './src/lib/routerEngine';
 
@@ -39,6 +39,7 @@ function synthesizeDirectAnswer(prompt: string, complexity?: string, modelName?:
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT || 3000);
+  let viteServer: ViteDevServer | undefined;
 
   app.use(express.json({ limit: '256kb' }));
 
@@ -67,12 +68,15 @@ async function startServer() {
 
   app.post('/api/route', async (req, res) => {
     const question = typeof req.body?.question === 'string' ? req.body.question : '';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1500);
 
     try {
       const response = await fetch('http://127.0.0.1:8000/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
+        signal: controller.signal,
       });
 
       const body = await response.text();
@@ -98,6 +102,8 @@ async function startServer() {
         complexity,
         router: 'fallback',
       });
+    } finally {
+      clearTimeout(timeout);
     }
   });
 
@@ -161,11 +167,11 @@ async function startServer() {
 
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
+    viteServer = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
-    app.use(vite.middlewares);
+    app.use(viteServer.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
@@ -174,9 +180,29 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const httpServer = app.listen(PORT, '0.0.0.0', () => {
     console.log(`TrimToken local-only gateway running on http://0.0.0.0:${PORT}`);
   });
+
+  let isClosing = false;
+  const shutdown = async (signal: string) => {
+    if (isClosing) return;
+    isClosing = true;
+    console.log(`Received ${signal}; shutting down gracefully.`);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        httpServer.close((error) => (error ? reject(error) : resolve()));
+      });
+      await viteServer?.close();
+    } catch (error) {
+      console.error('Failed to close server resources cleanly:', error);
+      process.exitCode = 1;
+    }
+  };
+
+  process.once('SIGINT', () => void shutdown('SIGINT'));
+  process.once('SIGTERM', () => void shutdown('SIGTERM'));
 }
 
 startServer().catch((err) => {

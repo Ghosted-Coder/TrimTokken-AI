@@ -31,6 +31,7 @@ interface AuthPageProps {
 export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAsGuest }) => {
   const [authRole, setAuthRole] = useState<'admin' | 'employee'>('admin');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [sceneTilt, setSceneTilt] = useState({ x: 0, y: 0 });
 
   // Form Fields
   const [email, setEmail] = useState('admin@trimtoken.ai');
@@ -52,6 +53,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [resetSent, setResetSent] = useState(false);
+
+  const handleScenePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.pointerType === 'touch' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    setSceneTilt({ x: Number((y * -2.5).toFixed(2)), y: Number((x * 3).toFixed(2)) });
+  };
+
+  const resetSceneTilt = () => setSceneTilt({ x: 0, y: 0 });
 
   // Switch role handler with realistic default presets
   const handleRoleChange = (newRole: 'admin' | 'employee') => {
@@ -212,13 +226,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
     <div className="min-h-screen bg-[#080c10] text-[#dfe2eb] flex flex-col justify-between selection:bg-[#00ff41]/25 selection:text-[#72ff70] relative overflow-hidden bg-grid-cyber">
       <MeteorShower />
       {/* Ambient background glow accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-[#00ff41]/5 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#00e5ff]/5 rounded-full blur-[130px] pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-[#00ff41]/[0.035] rounded-full blur-[140px] pointer-events-none"></div>
 
       {/* Top Header Bar with Brand */}
-      <header className="w-full border-b border-[#3b4b37]/50 bg-[#090d13]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 z-20 flex items-center justify-between">
+      <header className="w-full border-b border-[#3b4b37]/50 bg-[#090d13]/85 backdrop-blur-xl px-4 py-3.5 sm:px-8 z-20 flex items-center justify-between">
         <div className="flex items-center gap-3 mx-auto sm:mx-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#101b2b] to-[#0a121e] border border-[#00C9E8]/40 flex items-center justify-center p-1 shadow-[0_0_18px_rgba(0,201,232,0.25)]">
+          <div className="w-9 h-9 rounded-xl bg-[#101b2b] border border-[#00C9E8]/40 flex items-center justify-center p-1 shadow-[0_0_18px_rgba(0,201,232,0.25)]">
             <TrimTokenLogo size="sm" variant="icon-only" />
           </div>
           <div>
@@ -226,16 +239,43 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
               <span>TrimToken</span>
               <span className="text-[#00e5ff] font-extrabold drop-shadow-[0_0_10px_rgba(0,229,255,0.6)]">AI</span>
             </div>
+            <p className="hidden text-[10px] font-mono-data tracking-wider text-[#869683] sm:block">
+              COST-AWARE LLM GATEWAY
+            </p>
           </div>
         </div>
       </header>
 
       {/* Main Center Stage: Authentication & Value Proposition */}
-      <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12 z-10">
-        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <main
+        className="flex-1 flex items-center justify-center px-4 py-6 sm:py-10 lg:py-12 z-10"
+        onPointerMove={handleScenePointerMove}
+        onPointerLeave={resetSceneTilt}
+      >
+        <div className="relative max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-20 -left-20 z-0 hidden h-[25rem] w-[25rem] opacity-70 lg:block"
+            style={{
+              transform: `translate3d(${sceneTilt.y * 1.5}px, ${sceneTilt.x * -1.5}px, 0)`,
+              transition: 'transform 180ms ease-out',
+            }}
+          >
+            <div className="absolute inset-10 rounded-full border border-[#00e5ff]/20 [transform:rotateX(64deg)_rotateZ(18deg)]" />
+            <div className="absolute inset-16 rounded-full border border-[#00ff41]/25 [transform:rotateX(64deg)_rotateZ(-28deg)]" />
+            <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] [transform:rotateX(58deg)_rotateZ(45deg)]">
+              <div className="absolute inset-0 rounded-2xl border border-[#00e5ff]/70 bg-[#10202b]/80 shadow-[0_0_35px_rgba(0,229,255,0.25)]" />
+              <div className="absolute inset-3 rounded-xl border border-[#00ff41]/50 bg-[#0b1718]/80 [transform:translateZ(22px)]" />
+              <div className="absolute -right-9 top-1/2 h-px w-9 bg-[#00ff41]/60 [transform:translateZ(10px)]" />
+              <div className="absolute -left-9 top-1/2 h-px w-9 bg-[#00e5ff]/60 [transform:translateZ(10px)]" />
+            </div>
+            <span className="absolute left-1/2 top-6 -translate-x-1/2 font-mono-data text-[9px] tracking-[0.3em] text-[#00e5ff]/60">
+              ROUTE CORE
+            </span>
+          </div>
           
           {/* Left Column: Product Value Proposition & Trust Highlights */}
-          <div className="lg:col-span-6 flex flex-col justify-center text-left space-y-6">
+          <div className="relative z-10 lg:col-span-6 flex flex-col justify-center text-left space-y-5 lg:space-y-6">
             {/* Compliance & Proxy Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101924]/90 border border-[#00C9E8]/40 shadow-[0_0_25px_rgba(0,201,232,0.2)] w-fit">
               <TrimTokenLogo size="xs" variant="icon-only" />
@@ -249,9 +289,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#dfe2eb] leading-[1.18]">
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#dfe2eb] leading-[1.12]">
               Cut Enterprise LLM Costs by{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff41] via-[#72ff70] to-[#00e5ff] glow-text-green">
+              <span className="text-[#72ff70] glow-text-green">
                 Up To 72%
               </span>{' '}
               Without Sacrificing Output Quality.
@@ -264,7 +304,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
             </p>
 
             {/* Quick Trust Highlights 4-box Grid */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div className="p-3.5 rounded-xl bg-[#14181f]/80 border border-[#3b4b37]/60 flex flex-col">
                 <span className="text-[11px] font-mono-data text-[#869683]">ROUTING OVERHEAD</span>
                 <span className="text-base font-bold font-mono-data text-[#00ff41] glow-text-green mt-0.5">&lt; 1.2ms k-NN</span>
@@ -288,15 +328,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
           </div>
 
           {/* Right Column: Focused Authentication Card */}
-          <div className="lg:col-span-6 w-full max-w-lg mx-auto">
-            <div className={`glass-panel rounded-2xl p-6 sm:p-8 border shadow-[0_0_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(0,229,255,0.12)] ${
+          <div className="relative z-10 lg:col-span-6 w-full max-w-lg mx-auto lg:pl-2">
+            <div
+              className={`glass-panel rounded-2xl p-6 sm:p-8 border shadow-[0_0_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-[transform,box-shadow,border-color] duration-300 hover:shadow-[0_0_60px_rgba(0,229,255,0.12)] ${
               authRole === 'admin' ? 'border-[#00ff41]/40' : 'border-[#00e5ff]/40'
-            }`}>
-            {/* Corner accent glow */}
-            <div className={`absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl pointer-events-none rounded-bl-full transition-all duration-500 ${
-              authRole === 'admin' ? 'from-[#00ff41]/15 to-transparent' : 'from-[#00e5ff]/15 to-transparent'
-            }`}></div>
-
+            }`}
+              style={{
+                transform: `perspective(1400px) rotateX(${sceneTilt.x}deg) rotateY(${sceneTilt.y}deg)`,
+                transformStyle: 'preserve-3d',
+              }}
+            >
+            <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full border border-[#00e5ff]/20 [transform:translateZ(28px)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute -bottom-16 -left-10 h-32 w-32 rounded-full border border-[#00ff41]/15 [transform:translateZ(18px)]" />
             {/* TWO PRIMARY OPTIONS: SIGN IN AS ADMIN VS SIGN IN AS EMPLOYEE */}
             <div className="mb-6">
               <label className="block text-[11px] font-mono-data text-[#869683] uppercase tracking-wider mb-2 font-bold flex items-center justify-between">
@@ -312,7 +355,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                   onClick={() => handleRoleChange('admin')}
                   className={`py-3 px-3 rounded-lg text-xs font-mono-data font-bold transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer relative ${
                     authRole === 'admin'
-                      ? 'bg-gradient-to-b from-[#00ff41]/20 to-[#00ff41]/10 text-[#00ff41] border border-[#00ff41] shadow-[0_0_15px_rgba(0,255,65,0.25)]'
+                      ? 'bg-[#00ff41]/[0.12] text-[#00ff41] border border-[#00ff41] shadow-[0_0_15px_rgba(0,255,65,0.25)]'
                       : 'text-[#b9ccb2] hover:text-white hover:bg-[#131a24] border border-transparent'
                   }`}
                 >
@@ -334,7 +377,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                   onClick={() => handleRoleChange('employee')}
                   className={`py-3 px-3 rounded-lg text-xs font-mono-data font-bold transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer relative ${
                     authRole === 'employee'
-                      ? 'bg-gradient-to-b from-[#00e5ff]/20 to-[#00e5ff]/10 text-[#00e5ff] border border-[#00e5ff] shadow-[0_0_15px_rgba(0,229,255,0.25)]'
+                      ? 'bg-[#00e5ff]/[0.12] text-[#00e5ff] border border-[#00e5ff] shadow-[0_0_15px_rgba(0,229,255,0.25)]'
                       : 'text-[#b9ccb2] hover:text-white hover:bg-[#131a24] border border-transparent'
                   }`}
                 >
@@ -421,7 +464,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
 
             {/* Error Message Box */}
             {errorMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs flex items-center gap-2.5 animate-shake">
+              <div role="alert" className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs flex items-center gap-2.5 animate-shake">
                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                 <span className="flex-1">{errorMessage}</span>
               </div>
@@ -499,6 +542,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                       <ShieldCheck className="w-4 h-4 text-[#ffba20]" />
                       <span>SAML SSO</span>
                     </button>
+                  </div>
+
+                  <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-[#00e5ff]/20 bg-[#00e5ff]/[0.05] px-3 py-2.5">
+                    <Server className="mt-0.5 h-4 w-4 shrink-0 text-[#00e5ff]" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-bold font-mono-data tracking-wide text-[#00e5ff]">
+                        LOCAL SANDBOX • NO PROVIDER KEYS REQUIRED
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-[#b9ccb2]">
+                        Explore routing and savings safely without creating third-party model charges.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -763,6 +818,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                   <button
                     type="submit"
                     disabled={isLoading}
+                    aria-busy={isLoading}
                     className={`w-full py-3 px-4 rounded-xl font-mono-data font-extrabold text-sm tracking-wider active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2 ${
                       authRole === 'admin'
                         ? 'bg-[#00ff41] hover:bg-[#72ff70] text-[#003907] shadow-[0_0_20px_rgba(0,255,65,0.35)]'
@@ -775,9 +831,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess, onContinueAs
                       <Zap className="w-4 h-4 fill-current" />
                     )}
                     <span>
-                      {mode === 'signin' 
-                        ? `ENTER AS ${authRole.toUpperCase()}` 
-                        : `PROVISION ${authRole.toUpperCase()} GATEWAY`}
+                      {isLoading
+                        ? 'CONNECTING...'
+                        : mode === 'signin'
+                          ? `ENTER AS ${authRole.toUpperCase()}`
+                          : `PROVISION ${authRole.toUpperCase()} GATEWAY`}
                     </span>
                     <ArrowRight className="w-4 h-4" />
                   </button>

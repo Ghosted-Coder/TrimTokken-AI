@@ -5,13 +5,15 @@
 
 import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { TopNavBar } from './components/TopNavBar';
+import AppNavbar from './components/ui/app-navbar';
+import FrequentlyAskedQuestions from './components/ui/frequently-asked-questions-with-accordion';
 import { HeroMetrics } from './components/HeroMetrics';
 import { WebsiteHero } from './components/WebsiteHero';
 import { WebsiteFooter } from './components/WebsiteFooter';
 import { StartupAnimation } from './components/StartupAnimation';
 import { AuthPage } from './components/AuthPage';
 import { MeteorShower } from './components/MeteorShower';
+import { SkiperReveal } from './components/ui/skiper-ui/skiper-motion';
 
 const ManualQueryPlayground = lazy(() => import('./components/ManualQueryPlayground').then((module) => ({ default: module.ManualQueryPlayground })));
 const LiveRoutingStream = lazy(() => import('./components/LiveRoutingStream').then((module) => ({ default: module.LiveRoutingStream })));
@@ -238,7 +240,10 @@ export default function App() {
   useEffect(() => {
     if (!routerConfig.isSimulating) return;
 
-    const interval = setInterval(async () => {
+    let isActive = true;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const runSimulationStep = async () => {
       const filteredSamples = SAMPLE_QUERIES.filter((q) => {
         if (routerConfig.scenario === 'mixed') return true;
         return q.domain === routerConfig.scenario;
@@ -248,19 +253,37 @@ export default function App() {
       const sample = pool[sampleIndexRef.current % pool.length];
       sampleIndexRef.current += 1;
 
-      const decision = await routeQuery(sample.prompt, models, routerConfig, sample.sampleResponse, 'BENCHMARK');
-      handleNewDecision(decision);
-    }, routerConfig.simulationSpeedMs);
+      try {
+        const decision = await routeQuery(sample.prompt, models, routerConfig, sample.sampleResponse, 'BENCHMARK');
+        if (isActive) handleNewDecision(decision);
+      } catch (error) {
+        console.warn('Benchmark simulation step failed; continuing after the next delay.', error);
+      } finally {
+        if (isActive) {
+          timeoutId = setTimeout(() => void runSimulationStep(), routerConfig.simulationSpeedMs);
+        }
+      }
+    };
 
-    return () => clearInterval(interval);
+    timeoutId = setTimeout(() => void runSimulationStep(), routerConfig.simulationSpeedMs);
+
+    return () => {
+      isActive = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [routerConfig.isSimulating, routerConfig.simulationSpeedMs, routerConfig.scenario, models, routerConfig.costSensitivity]);
 
   // Burst traffic trigger
   const handleTriggerBurst = async (count: number) => {
-    for (let i = 0; i < count; i++) {
+    const boundedCount = Math.min(Math.max(Math.floor(count), 0), 20);
+    for (let i = 0; i < boundedCount; i++) {
       const sample = SAMPLE_QUERIES[Math.floor(Math.random() * SAMPLE_QUERIES.length)];
-      const decision = await routeQuery(sample.prompt, models, routerConfig, sample.sampleResponse, 'BENCHMARK');
-      handleNewDecision(decision);
+      try {
+        const decision = await routeQuery(sample.prompt, models, routerConfig, sample.sampleResponse, 'BENCHMARK');
+        handleNewDecision(decision);
+      } catch (error) {
+        console.warn('Benchmark burst request failed; continuing with remaining requests.', error);
+      }
     }
   };
 
@@ -338,6 +361,57 @@ export default function App() {
     setActiveTab(tab);
   };
 
+  const appNavbarTabs = [
+    ...(isAdmin ? [{ label: 'TEAM_USAGE', value: 'team_usage' }] : []),
+    { label: 'PLAYGROUND', value: 'playground' },
+    ...(isAdmin ? [
+      { label: 'ROI_CALCULATOR', value: 'roi_calculator' },
+      { label: 'ARCHITECTURE', value: 'architecture' },
+      { label: 'SIMULATOR', value: 'simulator' },
+      { label: 'POLICIES', value: 'policies' },
+      { label: 'ANALYTICS', value: 'analytics' },
+      { label: 'PYTHON_SDK', value: 'python_sdk' },
+      { label: 'GATEWAY_DOCS', value: 'gateway_docs' },
+    ] : []),
+    { label: 'ROUTING_LOG', value: 'routing_log' },
+  ];
+
+  const activeNavbarTab = activeTab === 'dashboard'
+    ? 'playground'
+    : activeTab === 'routing-log'
+      ? 'routing_log'
+      : activeTab === 'python'
+        ? 'python_sdk'
+        : activeTab === 'docs'
+          ? 'gateway_docs'
+          : activeTab;
+
+  const handleAppNavbarTabChange = (value: string) => {
+    if (value === 'team_usage' || value === 'roi_calculator' || value === 'architecture') {
+      handleTabChange('dashboard');
+      handleScrollToSection(
+        value === 'team_usage'
+          ? 'employee-telemetry-hub'
+          : value === 'roi_calculator'
+            ? 'roi-calculator'
+            : 'architecture',
+      );
+      return;
+    }
+
+    const tabMap = {
+      playground: 'dashboard',
+      simulator: 'simulator',
+      policies: 'policies',
+      analytics: 'analytics',
+      python_sdk: 'python',
+      gateway_docs: 'docs',
+      routing_log: 'routing-log',
+    } as const;
+    const nextTab = tabMap[value as keyof typeof tabMap];
+    if (nextTab) handleTabChange(nextTab);
+  };
+
   return (
     <div className="bg-[#080c10] text-[#dfe2eb] min-h-screen font-body flex flex-col selection:bg-[#00ff41]/25 selection:text-[#72ff70] relative bg-grid-cyber ambient-glow-green">
       <MeteorShower />
@@ -347,27 +421,16 @@ export default function App() {
         onComplete={handleCompleteStartupAnimation}
       />
 
-      {/* Fixed Top Navbar */}
-      <TopNavBar
-        activeTab={activeTab}
-        setActiveTab={handleTabChange}
-        isSimulating={routerConfig.isSimulating}
-        setIsSimulating={(val) =>
-          setRouterConfig((prev) => ({
-            ...prev,
-            isSimulating: typeof val === 'function' ? val(prev.isSimulating) : val,
-          }))
-        }
-        onResetStats={handleResetStats}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        onOpenManageProviders={() => setIsManageProvidersOpen(true)}
-        onScrollToSection={handleScrollToSection}
-        onRunQueryFromTop={handleRunQueryFromTop}
-        onReplayIntro={() => setShowStartupAnimation(true)}
-        currentUser={currentUser}
+      <AppNavbar
+        tabs={appNavbarTabs}
+        activeTab={activeNavbarTab}
+        onTabChange={handleAppNavbarTabChange}
+        brandName="TrimToken AI"
+        brandBadge="v1.0"
+        userName={currentUser.name}
+        userEmail={currentUser.email}
+        userInitials={currentUser.initials}
         onLogout={handleLogout}
-        onOpenAuth={handleOpenAuth}
       />
 
       {/* Main Content Area */}
@@ -385,19 +448,25 @@ export default function App() {
         {activeTab === 'dashboard' && (
           <div className="space-y-16 sm:space-y-20">
             {/* Product Hero */}
-            <WebsiteHero
-              onExplorePlayground={() => handleScrollToSection('interactive-playground')}
-              onExploreRoi={() => handleScrollToSection('roi-calculator')}
-              onExploreDocs={() => handleTabChange('docs')}
-              onExecuteQuery={handleRunQueryFromTop}
-              percentRetained={percentRetained}
-              totalSaved={dollarsSavedTotal}
-              onReplayIntro={() => setShowStartupAnimation(true)}
-              isAdmin={isAdmin}
-              models={models}
-            />
+            <SkiperReveal>
+              <WebsiteHero
+                onExplorePlayground={() => handleScrollToSection('interactive-playground')}
+                onExploreRoi={() => handleScrollToSection('roi-calculator')}
+                onExploreDocs={() => handleTabChange('docs')}
+                onExecuteQuery={handleRunQueryFromTop}
+                percentRetained={percentRetained}
+                totalSaved={dollarsSavedTotal}
+                onReplayIntro={() => setShowStartupAnimation(true)}
+                isAdmin={isAdmin}
+                models={models}
+              />
+            </SkiperReveal>
 
             {/* Interactive Live Playground & Stream Section */}
+            <SkiperReveal
+              delay={0.06}
+              className="w-full scroll-mt-28 pt-2 sm:pt-4"
+            >
             <motion.div
               id="interactive-playground"
               initial={{ opacity: 0, y: 32 }}
@@ -434,6 +503,7 @@ export default function App() {
                 </div>
               </div>
             </motion.div>
+            </SkiperReveal>
 
             {/* Admin-Exclusive: Employee Usage, Online/Offline Roster & Telemetry Hub */}
             {isAdmin && (
@@ -472,59 +542,73 @@ export default function App() {
             >
               <ArchitectureSection />
             </motion.div>
+
+            <FrequentlyAskedQuestions />
           </div>
         )}
 
         {/* Tab 2: Traffic Simulator Studio */}
         {activeTab === 'simulator' && (
           <div className="space-y-8">
-            <HeroMetrics
-              naiveCost={naiveCostTotal}
-              realizedCost={realizedCostTotal}
-              dollarsSaved={dollarsSavedTotal}
-              percentRetained={percentRetained}
-              totalQueries={totalQueries}
-            />
-            <SimulatorView
-              config={routerConfig}
-              onChangeConfig={(newCfg) => setRouterConfig((prev) => ({ ...prev, ...newCfg }))}
-              onTriggerBurst={handleTriggerBurst}
-              recentQueries={queries}
-              models={models}
-              totalQueries={totalQueries}
-            />
+            <SkiperReveal>
+              <HeroMetrics
+                naiveCost={naiveCostTotal}
+                realizedCost={realizedCostTotal}
+                dollarsSaved={dollarsSavedTotal}
+                percentRetained={percentRetained}
+                totalQueries={totalQueries}
+              />
+            </SkiperReveal>
+            <SkiperReveal delay={0.06}>
+              <SimulatorView
+                config={routerConfig}
+                onChangeConfig={(newCfg) => setRouterConfig((prev) => ({ ...prev, ...newCfg }))}
+                onTriggerBurst={handleTriggerBurst}
+                recentQueries={queries}
+                models={models}
+                totalQueries={totalQueries}
+              />
+            </SkiperReveal>
           </div>
         )}
 
         {/* Tab 3: Routing Policies & Pareto Tuning */}
         {activeTab === 'policies' && (
           <div className="space-y-8">
-            <HeroMetrics
-              naiveCost={naiveCostTotal}
-              realizedCost={realizedCostTotal}
-              dollarsSaved={dollarsSavedTotal}
-              percentRetained={percentRetained}
-              totalQueries={totalQueries}
-            />
-            <RoutingPoliciesView
-              config={routerConfig}
-              onChangeConfig={(newCfg) => setRouterConfig((prev) => ({ ...prev, ...newCfg }))}
-              models={models}
-            />
+            <SkiperReveal>
+              <HeroMetrics
+                naiveCost={naiveCostTotal}
+                realizedCost={realizedCostTotal}
+                dollarsSaved={dollarsSavedTotal}
+                percentRetained={percentRetained}
+                totalQueries={totalQueries}
+              />
+            </SkiperReveal>
+            <SkiperReveal delay={0.06}>
+              <RoutingPoliciesView
+                config={routerConfig}
+                onChangeConfig={(newCfg) => setRouterConfig((prev) => ({ ...prev, ...newCfg }))}
+                models={models}
+              />
+            </SkiperReveal>
           </div>
         )}
 
         {/* Tab 4: Analytics */}
         {activeTab === 'analytics' && (
           <div className="space-y-8">
-            <HeroMetrics
-              naiveCost={naiveCostTotal}
-              realizedCost={realizedCostTotal}
-              dollarsSaved={dollarsSavedTotal}
-              percentRetained={percentRetained}
-              totalQueries={totalQueries}
-            />
-            <AnalyticsView stats={aggregatedStats} models={models} />
+            <SkiperReveal>
+              <HeroMetrics
+                naiveCost={naiveCostTotal}
+                realizedCost={realizedCostTotal}
+                dollarsSaved={dollarsSavedTotal}
+                percentRetained={percentRetained}
+                totalQueries={totalQueries}
+              />
+            </SkiperReveal>
+            <SkiperReveal delay={0.06}>
+              <AnalyticsView stats={aggregatedStats} models={models} />
+            </SkiperReveal>
           </div>
         )}
 

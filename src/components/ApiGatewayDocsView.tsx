@@ -79,7 +79,7 @@ print(response.json()["choices"][0]["message"]["content"])`;
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="glass-panel rounded-xl p-6 border border-[#ffba20]/30 bg-gradient-to-r from-[#1c2026] via-[#262014] to-[#10141a]">
+      <div className="glass-panel rounded-xl p-6 border border-[#ffba20]/30 bg-[#262014]/70">
         <div className="flex items-center gap-3">
           <span className="w-10 h-10 rounded-lg bg-[#ffba20]/15 border border-[#ffba20]/40 flex items-center justify-center text-[#ffba20]">
             <BookOpen className="w-6 h-6" />

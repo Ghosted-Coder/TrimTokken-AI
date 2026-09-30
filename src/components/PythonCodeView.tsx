@@ -27,7 +27,7 @@ export const PythonCodeView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="glass-panel rounded-xl p-6 border border-[#00e5ff]/30 bg-gradient-to-r from-[#10141a] via-[#16222f] to-[#10141a]">
+      <div className="glass-panel rounded-xl p-6 border border-[#00e5ff]/30 bg-[#16222f]/70">
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <span className="w-10 h-10 rounded-lg bg-[#00e5ff]/15 border border-[#00e5ff]/40 flex items-center justify-center text-[#00e5ff]">

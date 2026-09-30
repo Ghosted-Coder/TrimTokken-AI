@@ -1,6 +1,7 @@
 import React from 'react';
 import { Activity, ArrowUpRight } from 'lucide-react';
 import { TrimTokenLogo } from './TrimTokenLogo';
+import { Skiper40 } from './ui/skiper-ui/skiper40';
 
 interface WebsiteFooterProps {
   onNavigateTab: (tab: 'dashboard' | 'simulator' | 'policies' | 'analytics' | 'python' | 'docs' | 'routing-log') => void;
@@ -136,6 +137,13 @@ export const WebsiteFooter: React.FC<WebsiteFooterProps> = ({ onNavigateTab }) =
               Compatible with OpenAI-compatible clients that support a custom base URL.
             </p>
           </div>
+        </div>
+
+        <div className="mb-8 border-y border-[#3b4b37]/40 py-5">
+          <div className="mb-3 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-[#869683]">
+            QUICK_NAVIGATION // HOVER_TO_EXPLORE
+          </div>
+          <Skiper40 />
         </div>
 
         <div className="pt-6 border-t border-[#3b4b37]/40 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-[#b9ccb2]/60">

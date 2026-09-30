@@ -20,13 +20,15 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-[#3b4b37]/60 bg-[#10141a] p-4">
+    <SkiperLift className="h-full">
+      <div className="h-full rounded-2xl border border-[#3b4b37]/60 bg-[#10141a] p-4 transition-colors hover:border-[#72ff70]/40">
       <p className="text-xs font-medium text-[#869683]">{label}</p>
       <p className="mt-1 text-2xl font-medium text-[#dfe2eb] tabular-nums">{value}</p>
       {sub && (
         <p className="mt-1 text-xs text-emerald-300 tabular-nums">{sub}</p>
       )}
-    </div>
+      </div>
+    </SkiperLift>
   );
 }
 
@@ -63,3 +65,4 @@ export function RoutingStats({
 }
 
 export default RoutingStats;
+import { SkiperLift } from "./skiper-ui/skiper-motion";

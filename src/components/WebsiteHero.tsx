@@ -189,7 +189,7 @@ export const WebsiteHero: React.FC<WebsiteHeroProps> = ({
               </div>
 
               <form onSubmit={handleHeroSubmit} className="relative group z-40">
-                <div className="absolute -inset-1 bg-gradient-to-r from-[#00ff41]/70 via-[#00e5ff]/60 to-[#72ff70]/70 rounded-2xl blur-md opacity-75 group-hover:opacity-100 group-focus-within:opacity-100 transition duration-500 pointer-events-none"></div>
+                <div className="absolute -inset-1 rounded-2xl border border-[#00ff41]/45 opacity-75 shadow-[0_0_22px_rgba(0,255,65,0.22)] group-hover:opacity-100 group-focus-within:opacity-100 transition duration-500 pointer-events-none"></div>
                 
                 <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-[#060a10]/98 backdrop-blur-2xl border-2 border-[#00ff41]/90 rounded-2xl sm:rounded-2xl p-1.5 sm:p-2 shadow-[0_0_30px_rgba(0,255,65,0.22)] gap-2">
                   {/* Search Input Container */}

@@ -16,7 +16,7 @@ export const RoutingPoliciesView: React.FC<RoutingPoliciesViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="glass-panel rounded-xl p-6 border border-[#00ff41]/30 bg-gradient-to-r from-[#142018] via-[#1c2026] to-[#10141a]">
+      <div className="glass-panel rounded-xl p-6 border border-[#00ff41]/30 bg-[#142018]/80">
         <div className="flex items-center gap-3 mb-2">
           <span className="w-9 h-9 rounded-lg bg-[#00ff41]/15 border border-[#00ff41]/40 flex items-center justify-center text-[#00ff41]">
             <Sliders className="w-5 h-5" />
